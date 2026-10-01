@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CSV Column Stats</title>
+<style>
+/* Layout: purple masthead, upload strip, then the column table beside a sticky result panel; stacks to one column under 900px. */
+:root {
+  --bg: #f6f5f9; --surface: #ffffff; --surface-2: #f0eef5; --ink: #1d1830; --muted: #5d5873; --line: #dedbe8;
+  --accent: #2b0b62; --accent-soft: #ebe6f6; --olive: #6f6031; --olive-soft: #f3efe2;
+  --mast-bg: #2b0b62; --mast-ink: #ffffff; --mast-muted: #cfc4ea;
+  --ok: #1e7a46; --ok-soft: #e4f3e9; --bad: #b3261e; --bad-soft: #fbe9e7; --warn: #845400; --warn-soft: #fcf1d8;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-data: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #13111b; --surface: #1c1928; --surface-2: #262236; --ink: #ece9f5; --muted: #aaa4c0; --line: #342e48;
+    --accent: #c4b2ff; --accent-soft: #2c2448; --olive: #d8c58e; --olive-soft: #2b2718;
+    --mast-bg: #23123f; --mast-ink: #f1edfb; --mast-muted: #b7a9dc;
+    --ok: #74d6a0; --ok-soft: #153022; --bad: #ff9a8f; --bad-soft: #3b1815; --warn: #f2c56a; --warn-soft: #33280f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #13111b; --surface: #1c1928; --surface-2: #262236; --ink: #ece9f5; --muted: #aaa4c0; --line: #342e48;
+  --accent: #c4b2ff; --accent-soft: #2c2448; --olive: #d8c58e; --olive-soft: #2b2718;
+  --mast-bg: #23123f; --mast-ink: #f1edfb; --mast-muted: #b7a9dc;
+  --ok: #74d6a0; --ok-soft: #153022; --bad: #ff9a8f; --bad-soft: #3b1815; --warn: #f2c56a; --warn-soft: #33280f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--font-body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h2 { font-size: 1.3rem; font-weight: 600; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.mast { background: var(--mast-bg); color: var(--mast-ink); padding-block: 28px 26px; }
+.mast h1 { font-size: clamp(1.9rem, 4.5vw, 2.7rem); line-height: 1.1; }
+.eyebrow { margin: 0 0 6px; text-transform: uppercase; letter-spacing: .12em; font-size: 12px; color: var(--mast-muted); }
+.lede { margin: 10px 0 0; max-width: 62ch; color: var(--mast-muted); }
+.loop { margin: 14px 0 0; font-style: italic; font-family: var(--font-display); color: var(--mast-muted); }
+
+main { display: grid; gap: 20px; padding-block: 24px 40px; }
+.upload { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding: 18px 20px;
+  background: var(--surface); border: 2px dashed var(--line); border-radius: 12px; }
+.upload.drag { border-color: var(--accent); background: var(--accent-soft); }
+.upload .hint { color: var(--muted); }
+.upload .spacer { flex: 1 1 auto; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--accent);
+  background: var(--accent); color: var(--bg); font: 600 14px/1.2 var(--font-body); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:hover { filter: brightness(1.12); }
+#file:focus-visible + label { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+#alerts { display: grid; gap: 8px; }
+#alerts:empty { display: none; }
+.alert { margin: 0; padding: 10px 14px; border-radius: 8px; border: 1px solid; }
+.alert ul { margin: 6px 0 0; padding-left: 20px; }
+.alert.error { background: var(--bad-soft); color: var(--bad); }
+.alert.warn { background: var(--warn-soft); color: var(--warn); }
+.alert.info { background: var(--olive-soft); color: var(--olive); }
+
+.fileinfo { margin: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); }
+.fileinfo strong { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.fileinfo span { font-variant-numeric: tabular-nums; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; min-width: 0; display: grid; gap: 14px; }
+.result { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+@media (max-width: 900px) { .result { position: static; } }
+
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+td.num, th.num { text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+tr.selected td { background: var(--accent-soft); }
+td.colname { font-weight: 600; overflow-wrap: anywhere; }
+.linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
+.pill { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 600; }
+tr.selected .pill.numeric { background: var(--surface); }
+.pill.numeric { background: var(--accent-soft); color: var(--accent); }
+.pill.text { background: var(--surface-2); color: var(--muted); }
+.pill.empty { background: var(--surface-2); color: var(--muted); font-style: italic; }
+.pill.yes { background: var(--warn-soft); color: var(--warn); }
+.pill.no { background: var(--ok-soft); color: var(--ok); }
+
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 600; }
+select { font: 15px var(--font-body); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); max-width: 100%; }
+.empty-state { margin: 0; color: var(--muted); }
+.readout { display: grid; gap: 14px; }
+.readout-col { margin: 0; color: var(--muted); }
+.readout-col strong { color: var(--ink); overflow-wrap: anywhere; }
+.figures { margin: 0; display: grid; gap: 12px; }
+.fig { display: grid; gap: 2px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.fig dt { font-size: 13px; color: var(--muted); }
+.fig dd { margin: 0; font-family: var(--font-data); font-variant-numeric: tabular-nums; font-size: 1.45rem; overflow-wrap: anywhere; }
+.fig.primary dd { font-size: 2.2rem; color: var(--accent); line-height: 1.15; }
+.fig dd.note { font-family: var(--font-body); font-size: 12.5px; color: var(--olive); }
+.counts { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; font-variant-numeric: tabular-nums; }
+.plot { width: 100%; height: auto; display: block; }
+.plot .axis { stroke: var(--line); stroke-width: 1; }
+.plot .band { fill: var(--accent-soft); }
+.plot .ticks { stroke: var(--ink); stroke-width: 1.2; stroke-opacity: .55; fill: none; }
+.plot .mean { stroke: var(--accent); stroke-width: 2.5; }
+.plot text { fill: var(--muted); font: 10px var(--font-data); }
+.caption { margin: 0; font-size: 12.5px; color: var(--muted); }
+
+details.box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 20px; }
+details.box summary { cursor: pointer; font-weight: 600; }
+details.box[open] summary { margin-bottom: 10px; }
+.rules { margin: 0; padding-left: 20px; max-width: 75ch; display: grid; gap: 4px; }
+.rules code, .test-list code { font-family: var(--font-data); font-size: 13px; }
+#selftest-summary.pass { color: var(--ok); }
+#selftest-summary.fail { color: var(--bad); }
+.test-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 3px; font-size: 13.5px; }
+.test-list li.ok { color: var(--muted); }
+.test-list li.bad { color: var(--bad); font-weight: 600; }
+.test-list .mark { display: inline-block; width: 1.4em; }
+footer { color: var(--muted); font-size: 13.5px; padding-block: 0 32px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <p class="eyebrow">Deterministic CSV analyser</p>
+    <h1>CSV Column Stats</h1>
+    <p class="lede">Upload a CSV to see every column's name, whether it is numeric and whether it has missing values. Then pick a numeric column to get its average and standard deviation.</p>
+    <p class="loop">Decompose &rarr; Specify &rarr; Verify. Same file in, same numbers out, every time.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="upload" id="dropzone" aria-label="Upload a CSV file">
+    <input type="file" id="file" accept=".csv,text/csv" class="sr-only">
+    <label for="file" class="btn">Choose CSV file</label>
+    <span class="hint">or drop a file here</span>
+    <span class="spacer"></span>
+    <button type="button" id="sample-btn" class="btn ghost">Load sample data</button>
+  </section>
+
+  <div id="alerts" role="status" aria-live="polite"></div>
+
+  <p id="fileinfo" class="fileinfo" hidden></p>
+
+  <div id="results" class="grid" hidden>
+    <section class="panel" aria-labelledby="cols-h">
+      <h2 id="cols-h">Columns</h2>
+      <div class="table-scroll">
+        <table id="summary">
+          <thead>
+            <tr><th>Column</th><th>Type</th><th>Missing values?</th><th class="num">Missing count</th><th class="num">Non-missing count</th></tr>
+          </thead>
+          <tbody id="summary-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel result" aria-labelledby="stats-h">
+      <h2 id="stats-h">Average and spread</h2>
+      <div class="field">
+        <label for="col-select">Choose a numeric column</label>
+        <select id="col-select"></select>
+      </div>
+      <div id="stats-card"></div>
+    </section>
+  </div>
+
+  <details class="box" id="rules">
+    <summary>Rules this app follows</summary>
+    <ul class="rules">
+      <li><strong>Missing:</strong> a cell is missing when it is blank or equals <code>NA</code>, <code>N/A</code>, <code>NaN</code>, <code>null</code>, <code>None</code> or <code>#N/A</code> (any letter case). <code>0</code> and <code>-</code> are not missing.</li>
+      <li><strong>Numeric:</strong> a column is numeric when every non-missing value is a plain number such as <code>42</code>, <code>-1.5</code>, <code>.5</code> or <code>1e2</code>. Values like <code>1,234</code>, <code>$5</code> or <code>5%</code> make the column text.</li>
+      <li><strong>Statistics</strong> use only the non-missing numeric values. Missing values are skipped, never counted as zero.</li>
+      <li><strong>Sample SD</strong> divides by n &minus; 1 (Excel <code>STDEV.S</code>, pandas <code>.std()</code>). <strong>Population SD</strong> divides by n (Excel <code>STDEV.P</code>, <code>numpy.std()</code>).</li>
+      <li>CSV quoting follows RFC 4180: quoted values may contain commas, line breaks and doubled quotes. Comma, semicolon and tab delimiters are detected from the header row.</li>
+    </ul>
+  </details>
+
+  <details class="box" id="selftest">
+    <summary id="selftest-summary">Self-test: running…</summary>
+    <button type="button" id="selftest-btn" class="btn ghost">Run self-test</button>
+    <ul id="selftest-list" class="test-list"></ul>
+  </details>
+</main>
+
+<footer class="wrap">
+  <p>All processing happens in your browser. Your file never leaves your device.</p>
+</footer>
+
+<script>
+"use strict";
+
+/* ---------- Constants ---------- */
+const MISSING_TOKENS = ["na", "n/a", "nan", "null", "none", "#n/a"];
+const NUMBER_RE = /^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/;
+const DELIMITER_NAMES = { ",": "comma", ";": "semicolon", "\t": "tab" };
+const MSG = {
+  noFile: "Please choose a CSV file to analyse.",
+  empty: "The file is empty.",
+  noRows: "The file has a header row but no data rows.",
+  unclosed: "Could not read the file: a quoted value is never closed.",
+  noNumeric: "No numeric columns found, so there is nothing to average.",
+  notCsv: "This file does not end in .csv; results may be wrong."
+};
+
+const TEST_CSV = `id,price,score,city,code,note,single,sci
+1,10,2,"Paris, FR",A1,"said ""hi""",42,-1.5
+2,20,,London,5,"line one
+line two",,0
+3,30,4,,7,plain,,2.5
+4,40,NA,Berlin,9,plain,,1e2
+5,50,6,Rome,B2,plain,," 3 "
+`;
+
+/* ---------- 1–8: pure functions (no DOM) ---------- */
+
+// 1. Remove a leading byte-order mark (Excel adds one to UTF-8 CSVs).
+function stripBOM(text) {
+  return text.charCodeAt(0) === 0xFEFF ? text.slice(1) : text;
+}
+
+// 2. Most frequent of , ; \t in the first record, counted outside quotes. Ties or none -> ",".
+function detectDelimiter(text) {
+  const counts = { ",": 0, ";": 0, "\t": 0 };
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === '"') { inQuotes = !inQuotes; continue; }
+    if (inQuotes) continue;
+    if (c === "\n" || c === "\r") break;
+    if (c === "," || c === ";" || c === "\t") counts[c]++;
+  }
+  let best = ",", bestCount = 0, tie = false;
+  for (const d of [",", ";", "\t"]) {
+    if (counts[d] > bestCount) { best = d; bestCount = counts[d]; tie = false; }
+    else if (counts[d] === bestCount && bestCount > 0) tie = true;
+  }
+  return bestCount === 0 || tie ? "," : best;
+}
+
+// 3. RFC 4180 parser, written as a character-by-character state machine.
+function parseCSV(text, delimiter) {
+  if (typeof text !== "string" || text.trim() === "") throw new Error(MSG.empty);
+  const d = delimiter || ",";
+  const records = [];
+  let record = [], field = "", inQuotes = false, i = 0;
+  const n = text.length;
+  while (i < n) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      }
+      field += c; i++; continue;
+    }
+    if (c === '"' && field === "") { inQuotes = true; i++; continue; }
+    if (c === d) { record.push(field); field = ""; i++; continue; }
+    if (c === "\r" || c === "\n") {
+      record.push(field); records.push(record);
+      record = []; field = "";
+      i += (c === "\r" && text[i + 1] === "\n") ? 2 : 1;
+      continue;
+    }
+    field += c; i++;
+  }
+  if (inQuotes) throw new Error(MSG.unclosed);
+  if (field !== "" || record.length > 0) { record.push(field); records.push(record); }
+
+  const kept = records.filter(r => r.some(f => f.trim() !== ""));
+  if (kept.length === 0) throw new Error(MSG.empty);
+
+  const headers = [];
+  const seen = new Set();
+  kept[0].forEach((h, k) => {
+    const base = h.trim() === "" ? "Column " + (k + 1) : h.trim();
+    let name = base, m = 2;
+    while (seen.has(name)) { name = base + " (" + m + ")"; m++; }
+    seen.add(name);
+    headers.push(name);
+  });
+
+  const width = headers.length;
+  const rows = [], warnings = [];
+  for (let r = 1; r < kept.length; r++) {
+    const rec = kept[r];
+    if (rec.length !== width) warnings.push("Row " + r + " has " + rec.length + " fields; expected " + width + ".");
+    const row = rec.slice(0, width);
+    while (row.length < width) row.push("");
+    rows.push(row);
+  }
+  if (rows.length === 0) throw new Error(MSG.noRows);
+  return { headers, rows, warnings };
+}
+
+// 4. Blank, or one of the missing-value tokens (case-insensitive).
+function isMissing(cell) {
+  const t = String(cell == null ? "" : cell).trim();
+  return t === "" || MISSING_TOKENS.indexOf(t.toLowerCase()) !== -1;
+}
+
+// 5. Strict number parsing. Returns null for anything that is not a plain finite number.
+function parseNumber(cell) {
+  const t = String(cell == null ? "" : cell).trim();
+  if (!NUMBER_RE.test(t)) return null;
+  const x = Number(t);
+  return Number.isFinite(x) ? x : null;
+}
+
+// 6. Classify one column by checking every cell.
+function profileColumn(name, cells, index = 0) {
+  let missingCount = 0, numericCount = 0;
+  for (const c of cells) {
+    if (isMissing(c)) missingCount++;
+    else if (parseNumber(c) !== null) numericCount++;
+  }
+  const totalCount = cells.length;
+  const nonMissingCount = totalCount - missingCount;
+  const type = nonMissingCount === 0 ? "empty" : (numericCount === nonMissingCount ? "numeric" : "text");
+  return {
+    name, index, totalCount,
+    missingCount, hasMissing: missingCount > 0,
+    nonMissingCount, numericCount,
+    type, mixed: numericCount > 0 && numericCount < nonMissingCount
+  };
+}
+
+// 7. Welford's one-pass mean and variance.
+function computeStats(numbers) {
+  let n = 0, mean = 0, m2 = 0;
+  for (const x of numbers) {
+    n++;
+    const delta = x - mean;
+    mean += delta / n;
+    m2 += delta * (x - mean);
+  }
+  if (n === 0) return { n: 0, mean: null, sampleSD: null, populationSD: null };
+  return {
+    n, mean,
+    sampleSD: n >= 2 ? Math.sqrt(m2 / (n - 1)) : null,
+    populationSD: Math.sqrt(m2 / n)
+  };
+}
+
+// 8. Fixed decimals, no locale formatting. "-0.0000" becomes "0.0000".
+function formatNumber(x, decimals = 4) {
+  if (x === null || x === undefined || !Number.isFinite(x)) return "n/a";
+  const s = x.toFixed(decimals);
+  return /^-0(\.0+)?$/.test(s) ? s.slice(1) : s;
+}
+
+// Helper: the numeric, non-missing values of one column.
+function numericValues(rows, index) {
+  const out = [];
+  for (const row of rows) {
+    if (isMissing(row[index])) continue;
+    const x = parseNumber(row[index]);
+    if (x !== null) out.push(x);
+  }
+  return out;
+}
+
+/* ---------- DOM helpers ---------- */
+const $ = id => document.getElementById(id);
+function el(tag, props, children) {
+  const node = document.createElement(tag);
+  if (props) for (const k in props) {
+    if (k === "text") node.textContent = props[k];
+    else if (k === "class") node.className = props[k];
+    else node.setAttribute(k, props[k]);
+  }
+  if (children) for (const ch of children) if (ch) node.appendChild(ch);
+  return node;
+}
+function svgEl(tag, attrs) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const k in attrs) node.setAttribute(k, attrs[k]);
+  return node;
+}
+
+let state = null; // { fileName, parsed, profiles }
+
+function showAlert(message, kind, list) {
+  const box = el("div", { class: "alert " + kind });
+  box.appendChild(el("span", { text: message }));
+  if (list && list.length) box.appendChild(el("ul", null, list.map(t => el("li", { text: t }))));
+  $("alerts").appendChild(box);
+}
+
+function resetView() {
+  state = null;
+  $("alerts").textContent = "";
+  $("fileinfo").textContent = "";
+  $("fileinfo").hidden = true;
+  $("summary-body").textContent = "";
+  $("col-select").textContent = "";
+  $("stats-card").textContent = "";
+  $("results").hidden = true;
+}
+
+function typeLabel(p) {
+  if (p.type === "numeric") return "Numeric";
+  if (p.type === "empty") return "Empty (all missing)";
+  return p.mixed ? "Text (mixed: " + p.numericCount + " of " + p.nonMissingCount + " values numeric)" : "Text";
+}
+
+/* ---------- 9. Summary table and column picker ---------- */
+function renderSummary(profiles, meta) {
+  const info = $("fileinfo");
+  info.textContent = "";
+  info.appendChild(el("strong", { text: meta.fileName }));
+  info.appendChild(el("span", { text: meta.rowCount + " rows × " + meta.colCount + " columns" }));
+  info.appendChild(el("span", { text: "Delimiter: " + DELIMITER_NAMES[meta.delimiter] }));
+  info.hidden = false;
+
+  if (meta.isSample) showAlert("Showing the built-in sample data. Choose your own CSV file to replace it.", "info");
+  if (meta.warnings.length) {
+    const shown = meta.warnings.slice(0, 5);
+    if (meta.warnings.length > 5) shown.push("…and " + (meta.warnings.length - 5) + " more");
+    showAlert("Some rows have the wrong number of fields. Short rows were padded with missing values; long rows were cut.", "warn", shown);
+  }
+
+  const body = $("summary-body");
+  body.textContent = "";
+  for (const p of profiles) {
+    const nameCell = el("td", { class: "colname" });
+    if (p.type === "numeric") {
+      const b = el("button", { type: "button", class: "linkish", text: p.name, "aria-label": "Analyse column " + p.name });
+      b.addEventListener("click", () => selectColumn(p.index));
+      nameCell.appendChild(b);
+    } else {
+      nameCell.textContent = p.name;
+    }
+    body.appendChild(el("tr", { "data-index": String(p.index) }, [
+      nameCell,
+      el("td", null, [el("span", { class: "pill " + p.type, text: typeLabel(p) })]),
+      el("td", null, [el("span", { class: "pill " + (p.hasMissing ? "yes" : "no"), text: p.hasMissing ? "Yes" : "No" })]),
+      el("td", { class: "num", text: String(p.missingCount) }),
+      el("td", { class: "num", text: String(p.nonMissingCount) })
+    ]));
+  }
+
+  const select = $("col-select");
+  select.textContent = "";
+  const numeric = profiles.filter(p => p.type === "numeric");
+  select.disabled = numeric.length === 0;
+  select.appendChild(el("option", { value: "", text: numeric.length ? "Select a column…" : "No numeric columns" }));
+  for (const p of numeric) select.appendChild(el("option", { value: String(p.index), text: p.name }));
+
+  const card = $("stats-card");
+  card.textContent = "";
+  if (numeric.length === 0) {
+    showAlert(MSG.noNumeric, "warn");
+    card.appendChild(el("p", { class: "empty-state", text: MSG.noNumeric }));
+  } else {
+    card.appendChild(el("p", { class: "empty-state", text: "Pick a column to see its average and standard deviation. Only numeric columns are listed." }));
+  }
+  $("results").hidden = false;
+}
+
+function selectColumn(index) {
+  if (!state) return;
+  const select = $("col-select");
+  select.value = String(index);
+  for (const tr of $("summary-body").children) tr.classList.toggle("selected", tr.getAttribute("data-index") === String(index));
+  const profile = state.profiles[index];
+  const values = numericValues(state.parsed.rows, index);
+  renderStats(profile, computeStats(values), values);
+}
+
+/* ---------- 10. Results card ---------- */
+function renderStats(profile, stats, values) {
+  const card = $("stats-card");
+  card.textContent = "";
+  const sampleText = stats.sampleSD === null ? "n/a — needs at least 2 values" : formatNumber(stats.sampleSD);
+  card.appendChild(el("div", { class: "readout" }, [
+    el("p", { class: "readout-col" }, [document.createTextNode("Column: "), el("strong", { text: profile.name })]),
+    el("dl", { class: "figures" }, [
+      el("div", { class: "fig primary" }, [el("dt", { text: "Average (mean)" }), el("dd", { text: formatNumber(stats.mean) })]),
+      el("div", { class: "fig" }, [
+        el("dt", { text: "Standard deviation (sample, n − 1)" }),
+        el("dd", { text: sampleText }),
+        el("dd", { class: "note", text: "matches Excel STDEV.S / pandas .std()" })
+      ]),
+      el("div", { class: "fig" }, [
+        el("dt", { text: "Standard deviation (population, n)" }),
+        el("dd", { text: formatNumber(stats.populationSD) }),
+        el("dd", { class: "note", text: "matches Excel STDEV.P / numpy.std()" })
+      ])
+    ]),
+    el("p", { class: "counts" }, [
+      el("span", { text: "Values used (n): " + stats.n }),
+      el("span", { text: "Missing values excluded: " + profile.missingCount })
+    ]),
+    values && values.length ? stripPlot(values, stats) : null,
+    values && values.length ? el("p", { class: "caption", text: "Each tick is one value. The line marks the mean; the shaded band is mean ± 1 standard deviation." }) : null
+  ]));
+}
+
+// One-row strip plot of every value, drawn to a single scale.
+function stripPlot(values, stats) {
+  const W = 320, H = 70, padX = 10, y0 = 14, y1 = 40;
+  let min = Infinity, max = -Infinity;
+  for (const v of values) { if (v < min) min = v; if (v > max) max = v; }
+  const span = max - min;
+  const sx = v => span === 0 ? W / 2 : padX + (v - min) / span * (W - 2 * padX);
+  const svg = svgEl("svg", { viewBox: "0 0 " + W + " " + H, class: "plot", role: "img",
+    "aria-label": "Strip plot of " + values.length + " values from " + formatNumber(min) + " to " + formatNumber(max) });
+  const sd = stats.sampleSD !== null ? stats.sampleSD : stats.populationSD;
+  if (sd > 0) {
+    const a = sx(Math.max(min, stats.mean - sd)), b = sx(Math.min(max, stats.mean + sd));
+    svg.appendChild(svgEl("rect", { class: "band", x: a.toFixed(2), y: y0 - 4, width: Math.max(0, b - a).toFixed(2), height: y1 - y0 + 8 }));
+  }
+  svg.appendChild(svgEl("line", { class: "axis", x1: padX, x2: W - padX, y1: y1 + 6, y2: y1 + 6 }));
+  let d = "";
+  for (const v of values) d += "M" + sx(v).toFixed(2) + " " + y0 + "V" + y1;
+  svg.appendChild(svgEl("path", { class: "ticks", d }));
+  const m = sx(stats.mean).toFixed(2);
+  svg.appendChild(svgEl("line", { class: "mean", x1: m, x2: m, y1: y0 - 8, y2: y1 + 8 }));
+  const lo = svgEl("text", { x: padX, y: H - 6, "text-anchor": "start" }); lo.textContent = formatNumber(min);
+  const hi = svgEl("text", { x: W - padX, y: H - 6, "text-anchor": "end" }); hi.textContent = formatNumber(max);
+  svg.appendChild(lo); svg.appendChild(hi);
+  return svg;
+}
+
+/* ---------- 11. File handling ---------- */
+function handleFile(file) {
+  resetView();
+  if (!file) { showAlert(MSG.noFile, "error"); return; }
+  const warnings = /\.csv$/i.test(file.name || "") ? [] : [MSG.notCsv];
+  const reader = new FileReader();
+  reader.onload = () => analyseText(String(reader.result), file.name, warnings, false);
+  reader.onerror = () => { resetView(); showAlert(MSG.noFile, "error"); };
+  reader.readAsText(file, "UTF-8");
+}
+
+function analyseText(raw, fileName, preWarnings, isSample) {
+  resetView();
+  for (const w of preWarnings) showAlert(w, "warn");
+  let parsed, delimiter;
+  try {
+    const text = stripBOM(raw);
+    delimiter = detectDelimiter(text);
+    parsed = parseCSV(text, delimiter);
+  } catch (e) {
+    showAlert(e.message, "error");
+    return;
+  }
+  const profiles = parsed.headers.map((h, i) => profileColumn(h, parsed.rows.map(r => r[i]), i));
+  renderSummary(profiles, {
+    fileName, rowCount: parsed.rows.length, colCount: parsed.headers.length,
+    delimiter, warnings: parsed.warnings, isSample
+  });
+  state = { fileName, parsed, profiles };
+}
+
+/* ---------- 12. Self-test ---------- */
+function runSelfTests() {
+  const results = [];
+  const same = (a, b) => (typeof a === "number" && typeof b === "number") ? Math.abs(a - b) <= 1e-9 : a === b;
+  const check = (name, expected, actual) => results.push({ name, ok: same(expected, actual), expected, actual });
+  const throwsWith = (name, fn, message) => {
+    let actual = "(no error)";
+    try { fn(); } catch (e) { actual = e.message; }
+    check(name, message, actual);
+  };
+  const done = () => ({ passed: results.filter(r => r.ok).length, failed: results.filter(r => !r.ok).length, results });
+
+  let p;
+  try { p = parseCSV(stripBOM(TEST_CSV), detectDelimiter(TEST_CSV)); }
+  catch (e) { check("parseCSV(TEST_CSV) runs without error", "(no error)", e.message); return done(); }
+
+  check("parseCSV: 8 headers", 8, p.headers.length);
+  check("parseCSV: 5 data rows (quoted newline stays in one field)", 5, p.rows.length);
+  check('parseCSV: row 1 note is said "hi"', 'said "hi"', p.rows[0][5]);
+  check("parseCSV: row 1 city is Paris, FR", "Paris, FR", p.rows[0][3]);
+  check("parseCSV: row 2 note keeps its line break", "line one\nline two", p.rows[1][5]);
+  check("parseCSV: no warnings", 0, p.warnings.length);
+
+  const prof = {};
+  p.headers.forEach((h, i) => { prof[h] = profileColumn(h, p.rows.map(r => r[i]), i); });
+  const expectedProfiles = [
+    ["id", "numeric", 0], ["price", "numeric", 0], ["score", "numeric", 2], ["city", "text", 1],
+    ["code", "text", 0], ["note", "text", 0], ["single", "numeric", 4], ["sci", "numeric", 0]
+  ];
+  for (const [col, type, missing] of expectedProfiles) {
+    check("profile " + col + ": type " + type, type, prof[col] ? prof[col].type : undefined);
+    check("profile " + col + ": missing " + missing, missing, prof[col] ? prof[col].missingCount : undefined);
+  }
+  check("profile code: mixed", true, prof.code.mixed);
+  check("profile code: numericCount 3", 3, prof.code.numericCount);
+  check("profile score: mixed is false", false, prof.score.mixed);
+
+  const expectedStats = [
+    ["id", 5, 3, 1.5811388300841898, 1.4142135623730951],
+    ["price", 5, 30, 15.811388300841896, 14.142135623730951],
+    ["score", 3, 4, 2, 1.632993161855452],
+    ["single", 1, 42, null, 0],
+    ["sci", 5, 20.8, Math.sqrt(1963.575), Math.sqrt(1570.86)]
+  ];
+  for (const [col, n, mean, sampleSD, populationSD] of expectedStats) {
+    const s = computeStats(numericValues(p.rows, p.headers.indexOf(col)));
+    check("stats " + col + ": n", n, s.n);
+    check("stats " + col + ": mean", mean, s.mean);
+    check("stats " + col + ": sample SD", sampleSD, s.sampleSD);
+    check("stats " + col + ": population SD", populationSD, s.populationSD);
+  }
+  const none = computeStats([]);
+  check("stats []: all null", "0,null,null,null", [none.n, none.mean, none.sampleSD, none.populationSD].map(String).join(","));
+
+  check('formatNumber(2) is "2.0000"', "2.0000", formatNumber(2));
+  check('formatNumber(null) is "n/a"', "n/a", formatNumber(null));
+  check('formatNumber(-0.00001) is "0.0000"', "0.0000", formatNumber(-0.00001));
+  check('formatNumber(44.31224436...) is "44.3122"', "44.3122", formatNumber(Math.sqrt(1963.575)));
+
+  for (const v of ["", "  ", "NA", "n/a", "NaN", "null", "None", "#N/A"]) check("isMissing(" + JSON.stringify(v) + ") is true", true, isMissing(v));
+  for (const v of ["0", "-", "abc"]) check("isMissing(" + JSON.stringify(v) + ") is false", false, isMissing(v));
+
+  for (const [v, x] of [["42", 42], ["-1.5", -1.5], [".5", 0.5], ["1e2", 100], [" 3 ", 3], ["+3", 3], ["2.", 2]]) {
+    check("parseNumber(" + JSON.stringify(v) + ") is " + x, x, parseNumber(v));
+  }
+  for (const v of ["1,234", "$5", "5%", "12abc", "Infinity", "", "0x1A", "1 000", "3,5"]) {
+    check("parseNumber(" + JSON.stringify(v) + ") is null", null, parseNumber(v));
+  }
+
+  check("detectDelimiter: semicolon", ";", detectDelimiter("a;b;c\n1;2;3"));
+  check("detectDelimiter: tab", "\t", detectDelimiter("a\tb\n1\t2"));
+  check("detectDelimiter: comma", ",", detectDelimiter("a,b\n1,2"));
+  check("detectDelimiter: ignores ; inside quotes", ",", detectDelimiter('"a;b;c",d\n1,2'));
+  check("stripBOM removes U+FEFF", "id,x", stripBOM("﻿id,x"));
+
+  throwsWith('parseCSV("") throws the empty-file message', () => parseCSV(""), MSG.empty);
+  throwsWith("parseCSV with an unclosed quote throws", () => parseCSV('a,b\n"1,2'), MSG.unclosed);
+  throwsWith("parseCSV with only a header throws", () => parseCSV("a,b\n"), MSG.noRows);
+
+  const ragged = parseCSV("a,b,c\n1,2\n1,2,3,4\n\n", ",");
+  check("ragged rows: short row padded with missing", "", ragged.rows[0][2]);
+  check("ragged rows: long row cut to header width", 3, ragged.rows[1].length);
+  check("ragged rows: warning text", "Row 1 has 2 fields; expected 3.", ragged.warnings[0]);
+  check("ragged rows: trailing blank line skipped", 2, ragged.rows.length);
+  const dup = parseCSV("x,,x\n1,2,3", ",");
+  check("headers: blank and duplicate names", "x|Column 2|x (2)", dup.headers.join("|"));
+  check("CRLF line endings", "2", parseCSV("a,b\r\n1,2\r\n", ",").rows[0][1]);
+
+  return done();
+}
+
+function renderSelfTests() {
+  const r = runSelfTests();
+  const total = r.passed + r.failed;
+  const summary = $("selftest-summary");
+  summary.textContent = r.failed === 0
+    ? "Self-test: " + r.passed + "/" + total + " passed"
+    : "Self-test: " + r.passed + "/" + total + " passed, " + r.failed + " failed";
+  summary.className = r.failed === 0 ? "pass" : "fail";
+  const list = $("selftest-list");
+  list.textContent = "";
+  const ordered = r.results.filter(t => !t.ok).concat(r.results.filter(t => t.ok));
+  for (const t of ordered) {
+    const li = el("li", { class: t.ok ? "ok" : "bad" }, [el("span", { class: "mark", text: t.ok ? "✓" : "✗" })]);
+    li.appendChild(document.createTextNode(t.name));
+    if (!t.ok) li.appendChild(document.createTextNode(" — expected " + JSON.stringify(t.expected) + ", got " + JSON.stringify(t.actual)));
+    list.appendChild(li);
+  }
+  if (r.failed > 0) $("selftest").open = true;
+  return r;
+}
+
+/* ---------- Wiring ---------- */
+$("file").addEventListener("change", e => {
+  handleFile(e.target.files && e.target.files[0]);
+  e.target.value = "";
+});
+$("col-select").addEventListener("change", e => {
+  if (e.target.value === "") {
+    for (const tr of $("summary-body").children) tr.classList.remove("selected");
+    $("stats-card").textContent = "";
+    $("stats-card").appendChild(el("p", { class: "empty-state", text: "Pick a column to see its average and standard deviation." }));
+    return;
+  }
+  selectColumn(Number(e.target.value));
+});
+$("sample-btn").addEventListener("click", () => {
+  analyseText(TEST_CSV, "sample.csv", [], true);
+  selectColumn(2);
+});
+$("selftest-btn").addEventListener("click", renderSelfTests);
+
+const zone = $("dropzone");
+["dragenter", "dragover"].forEach(t => zone.addEventListener(t, e => { e.preventDefault(); zone.classList.add("drag"); }));
+["dragleave", "drop"].forEach(t => zone.addEventListener(t, e => { e.preventDefault(); zone.classList.remove("drag"); }));
+zone.addEventListener("drop", e => handleFile(e.dataTransfer && e.dataTransfer.files[0]));
+
+renderSelfTests();
+analyseText(TEST_CSV, "sample.csv", [], true);
+selectColumn(2);
+</script>
+</body>
+</html>

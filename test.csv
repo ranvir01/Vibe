@@ -1,0 +1,7 @@
+id,price,score,city,code,note,single,sci
+1,10,2,"Paris, FR",A1,"said ""hi""",42,-1.5
+2,20,,London,5,"line one
+line two",,0
+3,30,4,,7,plain,,2.5
+4,40,NA,Berlin,9,plain,,1e2
+5,50,6,Rome,B2,plain,," 3 "
