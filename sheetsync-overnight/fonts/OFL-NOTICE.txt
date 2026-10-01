@@ -1,0 +1,1 @@
+Web fonts shipped for offline use: IBM Plex Sans, IBM Plex Mono (Copyright IBM Corp., Reserved Font Name "Plex") and Bricolage Grotesque (Copyright The Bricolage Grotesque Project Authors). All under the SIL Open Font License 1.1 (https://scripts.sil.org/OFL). Served online from Google Fonts; these copies are only a fallback when the presenting laptop is offline.
