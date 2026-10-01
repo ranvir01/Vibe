@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2b0b62">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%232b0b62%22/%3E%3Cpath d=%22M8 22V14M14 22V9M20 22V16M26 22V12%22 stroke=%22%23fff%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
 <title>CSV Column Stats</title>
 <style>
 /* Layout: purple masthead, upload strip, then the column table beside a sticky result panel; stacks to one column under 900px. */
@@ -34,14 +37,18 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--font-body); }
-.wrap { max-width: 1120px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); }
+.wrap { max-width: 1120px; margin: 0 auto;
+  padding-left: max(clamp(16px, 4vw, 40px), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(16px, 4vw, 40px), env(safe-area-inset-right, 0px)); }
+button, select, summary, label.btn { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
 h2 { font-size: 1.3rem; font-weight: 600; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-.mast { background: var(--mast-bg); color: var(--mast-ink); padding-block: 28px 26px; }
+.mast { background: var(--mast-bg); color: var(--mast-ink); padding-block: calc(28px + env(safe-area-inset-top, 0px)) 26px; }
 .mast h1 { font-size: clamp(1.9rem, 4.5vw, 2.7rem); line-height: 1.1; }
 .eyebrow { margin: 0 0 6px; text-transform: uppercase; letter-spacing: .12em; font-size: 12px; color: var(--mast-muted); }
 .lede { margin: 10px 0 0; max-width: 62ch; color: var(--mast-muted); }
@@ -53,10 +60,12 @@ main { display: grid; gap: 20px; padding-block: 24px 40px; }
 .upload.drag { border-color: var(--accent); background: var(--accent-soft); }
 .upload .hint { color: var(--muted); }
 .upload .spacer { flex: 1 1 auto; }
-.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--accent);
+@media (hover: none), (pointer: coarse) { .upload .hint, .upload .spacer { display: none; } }
+@media (max-width: 520px) { .upload { padding: 14px; } .upload .btn { flex: 1 1 100%; } }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--accent);
   background: var(--accent); color: var(--bg); font: 600 14px/1.2 var(--font-body); cursor: pointer; }
 .btn.ghost { background: transparent; color: var(--accent); }
-.btn:hover { filter: brightness(1.12); }
+@media (hover: hover) { .btn:hover { filter: brightness(1.12); } }
 #file:focus-visible + label { outline: 3px solid var(--accent); outline-offset: 3px; }
 
 #alerts { display: grid; gap: 8px; }
@@ -84,7 +93,19 @@ th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: v
 td.num, th.num { text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; }
 tr.selected td { background: var(--accent-soft); }
 td.colname { font-weight: 600; overflow-wrap: anywhere; }
-.linkish { background: none; border: 0; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
+.linkish { background: none; border: 0; padding: 10px 6px; margin: -10px -6px; min-height: 44px; font: inherit; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; text-align: left; }
+@media (max-width: 640px) {
+  #summary thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  #summary, #summary tbody, #summary tr, #summary td { display: block; }
+  #summary tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 14px; padding: 10px; border-bottom: 1px solid var(--line); border-radius: 8px; }
+  #summary td { border: 0; padding: 0; background: none; }
+  #summary tr.selected { background: var(--accent-soft); }
+  #summary td.colname { grid-column: 1 / -1; font-size: 16px; }
+  #summary td.num { text-align: left; }
+  #summary td[data-label]::before { content: attr(data-label); display: block; margin-bottom: 2px; font: 600 11px/1.3 var(--font-body); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .panel { padding: 16px; }
+  .table-scroll { margin-inline: -10px; }
+}
 .pill { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 600; }
 tr.selected .pill.numeric { background: var(--surface); }
 .pill.numeric { background: var(--accent-soft); color: var(--accent); }
@@ -95,7 +116,7 @@ tr.selected .pill.numeric { background: var(--surface); }
 
 .field { display: grid; gap: 6px; }
 .field label { font-weight: 600; }
-select { font: 15px var(--font-body); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); max-width: 100%; }
+select { font: 16px var(--font-body); min-height: 44px; width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); max-width: 100%; }
 .empty-state { margin: 0; color: var(--muted); }
 .readout { display: grid; gap: 14px; }
 .readout-col { margin: 0; color: var(--muted); }
@@ -104,7 +125,7 @@ select { font: 15px var(--font-body); padding: 8px 10px; border-radius: 8px; bor
 .fig { display: grid; gap: 2px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .fig dt { font-size: 13px; color: var(--muted); }
 .fig dd { margin: 0; font-family: var(--font-data); font-variant-numeric: tabular-nums; font-size: 1.45rem; overflow-wrap: anywhere; }
-.fig.primary dd { font-size: 2.2rem; color: var(--accent); line-height: 1.15; }
+.fig.primary dd { font-size: clamp(1.8rem, 8vw, 2.2rem); color: var(--accent); line-height: 1.15; }
 .fig dd.note { font-family: var(--font-body); font-size: 12.5px; color: var(--olive); }
 .counts { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 18px; font-variant-numeric: tabular-nums; }
 .plot { width: 100%; height: auto; display: block; }
@@ -116,8 +137,8 @@ select { font: 15px var(--font-body); padding: 8px 10px; border-radius: 8px; bor
 .caption { margin: 0; font-size: 12.5px; color: var(--muted); }
 
 details.box { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 20px; }
-details.box summary { cursor: pointer; font-weight: 600; }
-details.box[open] summary { margin-bottom: 10px; }
+details.box summary { cursor: pointer; font-weight: 600; padding-block: 11px; margin-block: -11px; }
+details.box[open] summary { margin-bottom: 4px; }
 .rules { margin: 0; padding-left: 20px; max-width: 75ch; display: grid; gap: 4px; }
 .rules code, .test-list code { font-family: var(--font-data); font-size: 13px; }
 #selftest-summary.pass { color: var(--ok); }
@@ -142,7 +163,7 @@ footer { color: var(--muted); font-size: 13.5px; padding-block: 0 32px; }
 
 <main class="wrap">
   <section class="upload" id="dropzone" aria-label="Upload a CSV file">
-    <input type="file" id="file" accept=".csv,text/csv" class="sr-only">
+    <input type="file" id="file" accept=".csv,text/csv,text/comma-separated-values,application/csv,application/vnd.ms-excel,text/plain" class="sr-only">
     <label for="file" class="btn">Choose CSV file</label>
     <span class="hint">or drop a file here</span>
     <span class="spacer"></span>
@@ -157,11 +178,11 @@ footer { color: var(--muted); font-size: 13.5px; padding-block: 0 32px; }
     <section class="panel" aria-labelledby="cols-h">
       <h2 id="cols-h">Columns</h2>
       <div class="table-scroll">
-        <table id="summary">
-          <thead>
-            <tr><th>Column</th><th>Type</th><th>Missing values?</th><th class="num">Missing count</th><th class="num">Non-missing count</th></tr>
+        <table id="summary" role="table">
+          <thead role="rowgroup">
+            <tr role="row"><th role="columnheader">Column</th><th role="columnheader">Type</th><th role="columnheader">Missing values?</th><th role="columnheader" class="num">Missing count</th><th role="columnheader" class="num">Non-missing count</th></tr>
           </thead>
-          <tbody id="summary-body"></tbody>
+          <tbody id="summary-body" role="rowgroup"></tbody>
         </table>
       </div>
     </section>
@@ -434,20 +455,20 @@ function renderSummary(profiles, meta) {
   const body = $("summary-body");
   body.textContent = "";
   for (const p of profiles) {
-    const nameCell = el("td", { class: "colname" });
+    const nameCell = el("td", { class: "colname", role: "cell" });
     if (p.type === "numeric") {
       const b = el("button", { type: "button", class: "linkish", text: p.name, "aria-label": "Analyse column " + p.name });
-      b.addEventListener("click", () => selectColumn(p.index));
+      b.addEventListener("click", () => selectColumn(p.index, true));
       nameCell.appendChild(b);
     } else {
       nameCell.textContent = p.name;
     }
-    body.appendChild(el("tr", { "data-index": String(p.index) }, [
+    body.appendChild(el("tr", { "data-index": String(p.index), role: "row" }, [
       nameCell,
-      el("td", null, [el("span", { class: "pill " + p.type, text: typeLabel(p) })]),
-      el("td", null, [el("span", { class: "pill " + (p.hasMissing ? "yes" : "no"), text: p.hasMissing ? "Yes" : "No" })]),
-      el("td", { class: "num", text: String(p.missingCount) }),
-      el("td", { class: "num", text: String(p.nonMissingCount) })
+      el("td", { role: "cell", "data-label": "Type" }, [el("span", { class: "pill " + p.type, text: typeLabel(p) })]),
+      el("td", { role: "cell", "data-label": "Missing values?" }, [el("span", { class: "pill " + (p.hasMissing ? "yes" : "no"), text: p.hasMissing ? "Yes" : "No" })]),
+      el("td", { class: "num", role: "cell", "data-label": "Missing count", text: String(p.missingCount) }),
+      el("td", { class: "num", role: "cell", "data-label": "Non-missing count", text: String(p.nonMissingCount) })
     ]));
   }
 
@@ -469,7 +490,7 @@ function renderSummary(profiles, meta) {
   $("results").hidden = false;
 }
 
-function selectColumn(index) {
+function selectColumn(index, reveal) {
   if (!state) return;
   const select = $("col-select");
   select.value = String(index);
@@ -477,6 +498,10 @@ function selectColumn(index) {
   const profile = state.profiles[index];
   const values = numericValues(state.parsed.rows, index);
   renderStats(profile, computeStats(values), values);
+  if (reveal && window.matchMedia("(max-width: 900px)").matches) {
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    $("stats-h").scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+  }
 }
 
 /* ---------- 10. Results card ---------- */
