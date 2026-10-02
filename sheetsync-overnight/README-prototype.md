@@ -1,13 +1,57 @@
 # SheetSync Overnight: prototype
 
-One self-contained page (`index.html`) that plays an overnight pass: synthetic inbox in, a current spreadsheet Master out, with human gates. Northline Freight is fictional and every message, row, label and number on the page is synthetic.
+Two pages live here. Northline Freight is fictional and every email, load and number on both pages is synthetic.
+
+| Page | What it is | Link |
+|---|---|---|
+| `index.html` | **The mockup, the main prototype.** A simple visual walk-through of seven synthetic emails from the two test nights. Nothing is connected and it is not scored. | https://claude.ai/artifact/4iQwwbqRDcKKa2SHYULVV1 |
+| `under-the-hood.html` | **The scored version.** All 30 synthetic emails against the answer key; the 96.7% right calls (right decision, row and value) come from here. | https://claude.ai/artifact/9wZL8BQF5P875W4i3TdFRB |
+
+GitHub Pages copy: https://ranvir01.github.io/Vibe/sheetsync-overnight/
+
+## The mockup (`index.html`)
+
+Built from `mockup.src.html` by `node _build/build-mockup.mjs` (which also writes `_build/out/mockup.artifact.html`). One self-contained file, no external JavaScript, runs from `file://` and as a Claude Artifact.
+
+**What it shows.** Four lanes, left to right: **Inbox, AI step, Sheet, Morning digest**. Press **Play the night** and seven Northline Freight emails play in the order they arrived (weekday and time on each, grouped under Night 1 and Night 2), each ending in one of the four outcomes:
+
+| Email | Outcome on screen |
+|---|---|
+| M002 appointment moved | fix a cell: R02 appt 08:00 to 10:00 |
+| M003 newsletter | nothing to do |
+| M004 invoice $2,450 | ask a person (money) |
+| M005 delivered | fix a cell: R03 In Transit to Delivered |
+| M015 new load | new row: NL-1074 |
+| M024 portal login with two-factor | ask a person (logins) |
+| M026 two loads in one email | ask a person (unclear row) |
+
+Emails that ask a person wait in the sheet lane's **Waiting for you** list; each write shows a grey **written** note (the read-back confirms the write landed, not that it is right). The play ends on the **7:00 morning digest**. The rows, emails and decision text are the real synthetic files (`data/inbox_messages.csv`, `data/master_sheet.csv`, `llm/cached-llm-run.json`), read by the build. Two more tabs show the same flow elsewhere: **Larkfield Home Comfort (fictional)**, an HVAC jobs sheet, and **Tidewell Goods Co. (fictional)**, an orders sheet. Both are hand-written examples, labelled as such on screen.
+
+**Where it would connect (hypothetical, named once per lane):** inbox = Gmail or Outlook, read-only · AI step = Claude API, one call per email, fixed instructions · sheet = Google Sheets, Excel Online or a cloud-synced workbook, cell edits and new rows only · digest = email, Slack or Teams at 7:00 · schedule = every night. Money, sending email, logins and rule changes always stay with a person.
+
+**Honesty on screen:** a "Mockup" label, "Nothing is connected. Emails, loads and the sheet are made up.", and one quiet footer line linking the scored version. No savings, minutes or ROI claims.
+
+The synthetic shipper was renamed "Harborline Partners" in the data files and both pages on 2026-10-02 because the earlier name read too close to a real brand; every score was re-run and is unchanged.
+
+**Controls.** Play the night / Reset buttons; Space play or pause, R reset, Left / Right previous or next email; business tabs with arrow keys. URL parameters: `?present=1` (1920 x 1080 recording mode) · `?autoplay=1` · `?speed=N` · `?business=freight|hvac|wholesale` · `?case=<id>`. A full play is about 50 s at speed 1.
+
+**Automation hook** (`window.__demo`): `ready` · `play({speed})` · `state()` (`{done, current, business, played}`) · `select(id)` · `reset()` · `steps` (the ordered demo steps; the intro has `n: null`, the eight numbered steps are the deck frames) · `showStep(i)` (one settled frame, no animation in flight).
+
+**Used by:** slide 6 of the deck. `node _build/capture-steps.mjs` opens `index.html?present=1&focus=1&frame=1` at 1920 x 1080 (frame=1 hides what the slide already says and sets the readable text larger; focus=1 dims the lanes a step is not about), calls `showStep` for each numbered step and saves the frames to `03-presentation/media/steps/` with `steps.json` (8 frames: the seven emails, then the digest; captions straight from `STEP_DEFS` in `mockup.src.html`). It fails if the count differs from the script's frame lines. The optional video is recorded from the same page: `node _build/record-demo.mjs 1` writes `05-video/demo.mp4`.
+
+**Checks:** `node _build/shoot-mockup.mjs` (screenshots at 1920 and 390 px, no horizontal scroll on phones).
+
+---
+
+## Under the hood (`under-the-hood.html`)
+
+The scored version: one self-contained page (`under-the-hood.html`) that plays an overnight pass: synthetic inbox in, a current spreadsheet Master out, with human gates. Northline Freight is fictional and every message, row, label and number on the page is synthetic.
 
 ## Open it
 
-- Double-click `index.html` (it runs from `file://`, no server, no build).
-- Or serve the folder: `python3 -m http.server 8765` → `http://127.0.0.1:8765/`.
-- Claude Artifact: `https://claude.ai/artifact/4iQwwbqRDcKKa2SHYULVV1`
-- GitHub Pages: `https://ranvir01.github.io/Vibe/sheetsync-overnight/`
+- Double-click `under-the-hood.html` (it runs from `file://`, no server, no build).
+- Or serve the folder: `python3 -m http.server 8765` → `http://127.0.0.1:8765/under-the-hood.html`.
+- Claude Artifact (scored version): `https://claude.ai/artifact/9wZL8BQF5P875W4i3TdFRB`
 
 The only network request is the Google Fonts stylesheet (IBM Plex Sans / Mono, with system fallbacks). If that request fails (offline, a strict network), the page falls back to the font files in `fonts/` next to it: an inline `@font-face` block sits between `<!--__LOCALFONTS_START__-->` and `<!--__LOCALFONTS_END__-->` right after the Google Fonts link; the artifact build strips that block, the pack and the GitHub Pages copy keep it. Nothing else leaves the page unless you choose the live LLM engine and paste your own key.
 
