@@ -4,7 +4,7 @@ Two pages live here. Northline Freight is fictional and every email, load and nu
 
 | Page | What it is | Link |
 |---|---|---|
-| `index.html` | **The mockup, the main prototype.** A simple visual walk-through of seven synthetic emails from the two test nights. Nothing is connected and it is not scored. | https://claude.ai/artifact/4iQwwbqRDcKKa2SHYULVV1 |
+| `index.html` | **The mockup, the main prototype.** It opens on the pipeline view: six synthetic emails on one fixed route, three that work and three that stop. A second tab, Whole night, plays seven emails from the two test nights. Nothing is connected and it is not scored. | https://claude.ai/artifact/4iQwwbqRDcKKa2SHYULVV1 |
 | `under-the-hood.html` | **The scored version.** All 30 synthetic emails against the answer key; the 96.7% right calls (right decision, row and value) come from here. | https://claude.ai/artifact/9wZL8BQF5P875W4i3TdFRB |
 
 GitHub Pages copy: https://ranvir01.github.io/Vibe/sheetsync-overnight/
@@ -13,33 +13,42 @@ GitHub Pages copy: https://ranvir01.github.io/Vibe/sheetsync-overnight/
 
 Built from `mockup.src.html` by `node _build/build-mockup.mjs` (which also writes `_build/out/mockup.artifact.html`). One self-contained file, no external JavaScript, runs from `file://` and as a Claude Artifact.
 
-**What it shows.** Four lanes, left to right: **Inbox, AI step, Sheet, Morning digest**. Press **Play the night** and seven Northline Freight emails play in the order they arrived (weekday and time on each, grouped under Night 1 and Night 2), each ending in one of the four outcomes:
+**Method.** One of the four methods in the course matrix: **LLM-Based Automated Workflow** (fixed steps, one AI step, not an agent). A strip at the top lights this one and greys out Rules-Based (If-Then), Machine Learning (Predict Y using X) and LLM-Based Autonomous Agent.
 
-| Email | Outcome on screen |
-|---|---|
-| M002 appointment moved | fix a cell: R02 appt 08:00 to 10:00 |
-| M003 newsletter | nothing to do |
-| M004 invoice $2,450 | ask a person (money) |
-| M005 delivered | fix a cell: R03 In Transit to Delivered |
-| M015 new load | new row: NL-1074 |
-| M024 portal login with two-factor | ask a person (logins) |
-| M026 two loads in one email | ask a person (unclear row) |
+**Pipeline view (opens first).** Seven stations, left to right, with the tag each would use:
 
-Emails that ask a person wait in the sheet lane's **Waiting for you** list; each write shows a grey **written** note (the read-back confirms the write landed, not that it is right). The play ends on the **7:00 morning digest**. The rows, emails and decision text are the real synthetic files (`data/inbox_messages.csv`, `data/master_sheet.csv`, `llm/cached-llm-run.json`), read by the build. Two more tabs show the same flow elsewhere: **Larkfield Home Comfort (fictional)**, an HVAC jobs sheet, and **Tidewell Goods Co. (fictional)**, an orders sheet. Both are hand-written examples, labelled as such on screen.
+1. **Gmail** (connector, read-only): flags new mail and attachments.
+2. **Drive** (connector): saves the attachment to one folder.
+3. **PDF reader** (code): text from the PDF; OCR for scans, with a quality flag.
+4. **Claude** (AI step): one decision (new row / fix a cell / nothing to do / ask a person) plus fixed fields.
+5. **Check** (code): every value copied from the source must be in the email or PDF text, and the load ID must be a valid sheet ID.
+6. **Sheets** (MCP connector): a new row or one cell edit, with the Drive link, then a read-back. MCP is a standard plug that lets the routine edit the sheet.
+7. **Digest** (7:00).
 
-**Where it would connect (hypothetical, named once per lane):** inbox = Gmail or Outlook, read-only · AI step = Claude API, one call per email, fixed instructions · sheet = Google Sheets, Excel Online or a cloud-synced workbook, cell edits and new rows only · digest = email, Slack or Teams at 7:00 · schedule = every night. Money, sending email, logins and rule changes always stay with a person.
+Six scenario chips and a **Play all** button. A token moves station to station and each station shows its result in plain words. A stop scenario puts a red stop marker on Claude, where the ask is decided; the check still shows its own result after it, in amber ("Code agrees"), as the second line of defence; Sheets and Digest show "Not reached."; the page then shows "Asks a person: <reason>" and moves the item into **Waiting for you**.
 
-**Honesty on screen:** a "Mockup" label, "Nothing is connected. Emails, loads and the sheet are made up.", and one quiet footer line linking the scored version. No savings, minutes or ROI claims.
+| # | Email | Result on screen |
+|---|---|---|
+| s1 works | M015 rate confirmation PDF | new row NL-1074 with a Drive link; the check finds the copied values in the PDF |
+| s2 works | M005 delivered, POD attached | the reader shows "Proof of delivery: no text needed."; fix a cell: In Transit becomes Delivered |
+| s3 works | M003 newsletter | nothing to do, no write |
+| s4 stops | M028 scanned rate confirmation | the reader flags a low-quality scan; Claude asks a person (load ID illegible) |
+| s5 stops | M023 "NL-1O71" (letter O, not zero, marked in red) | Claude finds the likely row (NL-1071) but asks a person; the check agrees: not a sheet ID |
+| s6 stops | M004 invoice for NL-1039 | money stays with a person: Claude asks a person (G1); the check agrees |
 
-The synthetic shipper was renamed "Harborline Partners" in the data files and both pages on 2026-10-02 because the earlier name read too close to a real brand; every score was re-run and is unchanged.
+**Honesty.** The decisions are the recorded AI run (`llm/cached-llm-run.json`, right on all six); the build fails if any of the six disagrees with the answer key. The PDF reader and the check run for real in the page: they match the recorded AI fields against the synthetic email and PDF text. Only copied fields are checked (load ID, shipper, origin and destination codes, pickup date and time); derived fields such as status show "set by the decision". The scored run did not include the check. The check is the pilot design step and can only turn a write into ask a person. The header reads "Mockup · nothing connected · synthetic data".
 
-**Controls.** Play the night / Reset buttons; Space play or pause, R reset, Left / Right previous or next email; business tabs with arrow keys. URL parameters: `?present=1` (1920 x 1080 recording mode) · `?autoplay=1` · `?speed=N` · `?business=freight|hvac|wholesale` · `?case=<id>`. A full play is about 50 s at speed 1.
+**Whole night view (second tab).** Four lanes, **Inbox, AI step, Sheet, Morning digest**. **Play the night** plays seven Northline Freight emails in the order they arrived (M002 appointment moved, M003 newsletter, M004 invoice, M005 delivered, M015 new load, M024 portal login, M026 two loads in one email) and ends on the **7:00 morning digest**. Two more tabs show the same flow for two hand-written fictional businesses: **Larkfield Home Comfort (fictional)**, an HVAC jobs sheet, and **Tidewell Goods Co. (fictional)**, an orders sheet. A full play is about 50 s at speed 1.
 
-**Automation hook** (`window.__demo`): `ready` · `play({speed})` · `state()` (`{done, current, business, played}`) · `select(id)` · `reset()` · `steps` (the ordered demo steps; the intro has `n: null`, the eight numbered steps are the deck frames) · `showStep(i)` (one settled frame, no animation in flight).
+The rows, emails and decision text are the real synthetic files (`data/inbox_messages.csv`, `data/master_sheet.csv`, the answer key, `llm/cached-llm-run.json`), read by the build. The synthetic shipper was renamed "Harborline Partners" in the data files and both pages on 2026-10-02 because the earlier name read too close to a real brand; every score was re-run and is unchanged. No savings, minutes or ROI claims.
 
-**Used by:** slide 6 of the deck. `node _build/capture-steps.mjs` opens `index.html?present=1&focus=1&frame=1` at 1920 x 1080 (frame=1 hides what the slide already says and sets the readable text larger; focus=1 dims the lanes a step is not about), calls `showStep` for each numbered step and saves the frames to `03-presentation/media/steps/` with `steps.json` (8 frames: the seven emails, then the digest; captions straight from `STEP_DEFS` in `mockup.src.html`). It fails if the count differs from the script's frame lines. The optional video is recorded from the same page: `node _build/record-demo.mjs 1` writes `05-video/demo.mp4`.
+**URL parameters.** `?view=night` opens the Whole night tab (`?case=` and `?business=freight|hvac|wholesale` also open it) · `?present=1` (1920 x 1080 canvas) · `?present=1&frame=1` (1920 x 904 capture mode: no header, method strip, notes or chips) · `?scenario=s1` to `s6` (one scenario, settled) · `?autoplay=1` (in the pipeline view: Play all) · `?speed=N`. Play all takes about 77 s at speed 1.
 
-**Checks:** `node _build/shoot-mockup.mjs` (screenshots at 1920 and 390 px, no horizontal scroll on phones).
+**Automation hook** (`window.__demo`). Night view, unchanged: `ready` · `play({speed})` · `state()` · `select(id)` · `reset()` · `steps` · `showStep(i)` · `total()`. Pipeline view: `scenarios` (id s1 to s6, `n`, `message_id`, `works`, `caption`, `short`, `stopAt`) · `showScenario(i)` · `playScenario(i, {speed})` · `playScenarios({speed})` · `scenarioResult(i)` · `view()` · `setView(v)` · `total('pipe')`.
+
+**Used by:** slide 4 of the deck (six frames). `node _build/capture-steps.mjs` opens `index.html?present=1&frame=1` at 1920 x 904, calls `showScenario` for each id in `03-presentation/media/steps/steps.json` (s1 to s6) and writes `step-s1.png` to `step-s6.png`. It fails if any text is cut off, or if the count differs from the script's "Frame N of 6" lines. The demo video records the pipeline Play all: `node _build/record-demo.mjs 1` writes `05-video/demo.mp4`, `demo.webm` and `poster.png`; `node _build/record-demo.mjs 1 night` writes `05-video/demo-night.mp4`.
+
+**Checks:** `node _build/shoot-mockup.mjs` (screenshots of both views at 1920, 1440 and 390 px; frame-mode text 24 px or more; no horizontal scroll on phones; the six decisions equal the recorded run).
 
 ---
 

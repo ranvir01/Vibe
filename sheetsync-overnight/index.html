@@ -499,6 +499,241 @@ html.frame .dg-sub,html.frame .dg-sec,html.frame .dg-last{font-size:24px}
 html.frame .tile b{font-size:36px}
 html.frame .ai-sum .num{font-size:88px}
 
+/* =====================================================================================================
+   Scenarios view (default): the one fixed route, seven stations, six synthetic emails (three work, three stop)
+   ===================================================================================================== */
+:root{--stop:#B4233C;--stop-bg:#FDE8EB;--stop-bd:#F3C1CA}
+.app{position:relative}
+.views{display:flex;margin:10px 0 0}
+.views .seg button{text-align:center;min-width:120px}
+html.present.view-night .views{display:none}
+html.view-night .pipe,html.view-night .pipe-tag{display:none!important}
+html.view-pipe .seg.biz,html.view-pipe .biz-now,html.view-pipe .controls,html.view-pipe .strip,html.view-pipe .arc,html.view-pipe .stage,html.view-pipe .ribbon,html.view-pipe .rail,html.view-pipe .foot{display:none!important}
+html.view-pipe .top{display:flex!important;align-items:center;justify-content:space-between;gap:16px;height:var(--topbar)}
+html.view-pipe .views{position:absolute;top:calc((var(--topbar) - 54px) / 2);left:50%;transform:translateX(-50%);margin:0;z-index:5}
+.pipe-tag{display:inline-flex;align-items:center;gap:8px;height:var(--chip-h);padding:0 14px;border-radius:999px;background:var(--tint);border:1px solid var(--line-cool);color:var(--muted);font:500 var(--fs-chip)/1 var(--sans);white-space:nowrap}
+.pipe-tag .ic{width:20px;height:20px;color:var(--muted)}
+
+.pipe{--g:14px;--p-body:16px;--p-name:18px;--p-small:14px;--p-badge:44px;--p-title:22px;display:flex;flex-direction:column;gap:14px;margin-top:18px;flex:1;min-height:0}
+/* the four methods for automation, ours lit */
+.methods{display:grid;grid-template-columns:auto repeat(4,minmax(0,1fr));gap:10px;align-items:stretch;flex:none}
+.m-h{align-self:center;font:600 var(--p-small)/1.2 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-right:4px;white-space:nowrap}
+.method{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:8px 14px;color:var(--faint);font-size:var(--p-small);line-height:1.25;min-width:0}
+.method b{display:block;font-weight:600;color:var(--muted)}
+.method .ic{width:26px;height:26px;flex:none}
+.method.on{border-color:var(--ai);background:var(--ai-bg);color:var(--ai);box-shadow:0 0 0 3px rgba(129,54,179,.12)}
+.method.on b{color:var(--ai)}
+/* scenario title */
+.p-title{display:flex;align-items:center;gap:14px;min-height:46px;flex:none}
+.p-num{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:700 var(--p-title)/1 var(--display);background:var(--tint-2);color:var(--accent-deep);flex:none}
+.p-num.works{background:var(--patch-bg);color:var(--patch)}
+.p-num.stops{background:var(--held-bg);color:var(--held)}
+.p-kind{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:999px;font:600 var(--p-name)/1 var(--sans);border:1px solid;flex:none}
+.p-kind .ic{width:26px;height:26px;color:currentColor}
+.p-kind.works{background:var(--patch-bg);border-color:var(--patch-bd);color:var(--patch)}
+.p-kind.stops{background:var(--held-bg);border-color:var(--held-bd);color:var(--held)}
+.p-name{font:700 var(--p-title)/1.15 var(--display);flex:0 1 auto;min-width:0}
+.p-cap{color:var(--muted);font-size:var(--p-body);line-height:1.3;min-width:0}
+/* the route: seven stations, left to right */
+.route{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--g);padding-top:46px;flex:1;min-height:0}
+.track{position:absolute;top:20px;height:4px;left:calc((100% - 6 * var(--g)) / 14);right:calc((100% - 6 * var(--g)) / 14);border-radius:2px;background:repeating-linear-gradient(90deg,var(--line-cool) 0 10px,transparent 10px 18px)}
+.track-on{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:2px;background:var(--accent);transition:width .5s var(--ease-move)}
+.track-on.stops{background:var(--held)}
+.st{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px;transition:background-color .35s var(--ease-out),box-shadow .35s var(--ease-out),opacity .35s,border-color .35s}
+.st::before{content:"";position:absolute;top:-34px;left:50%;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:#fff;border:3px solid var(--line-cool);box-sizing:border-box;transition:background-color .3s,border-color .3s}
+.st.done::before{background:var(--accent);border-color:var(--accent)}
+.route.stops .st.done::before{background:var(--held);border-color:var(--held)}
+.st.on{background:var(--tint);box-shadow:var(--shadow-lift);border-color:var(--accent)}
+.st[data-st="claude"].on{background:#FAF6FD;border-color:var(--ai)}
+.st.ghost{opacity:.42;box-shadow:none;border-style:dashed;background:transparent}
+.st.stop{border-color:var(--stop);box-shadow:0 0 0 4px rgba(180,35,60,.12),var(--shadow)}
+.st.stop::before{display:none}
+.st-stopmark{position:absolute;top:-44px;left:50%;width:40px;height:40px;margin-left:-20px;display:none}
+.st-stopmark .ic{width:40px;height:40px}
+.st.stop .st-stopmark{display:block}
+.st.also{border-color:var(--held-bd);box-shadow:0 0 0 3px rgba(154,69,8,.08),var(--shadow)}
+.nw{white-space:nowrap}
+.oh{color:var(--stop);background:var(--stop-bg);border-radius:4px;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:3px;padding:0 1px}
+.r-big,.r-kv .v,.r-ck li b,.r-row .v,.p-wait li span{font-variant-numeric:slashed-zero}
+.st-h{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:10px;row-gap:8px;min-width:0}
+.st-h .st-tag{grid-column:1 / -1;justify-self:start;margin-top:0}
+.st-badge{position:relative;width:var(--p-badge);height:var(--p-badge);border-radius:50%;background:var(--tint-2);display:grid;place-items:center;flex:none}
+.st-badge .ic{width:calc(var(--p-badge) * .64);height:calc(var(--p-badge) * .64)}
+.st[data-st="claude"] .st-badge{background:var(--ai-bg)}
+.st-nm{min-width:0}
+.st-name{display:block;font:700 var(--p-name)/1.1 var(--display);white-space:nowrap}
+.st-tag{display:inline-block;margin-top:5px;padding:3px 9px;border-radius:999px;font:600 var(--p-small)/1.15 var(--sans);border:1px solid var(--line);background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.st-tag.ai{background:var(--ai-bg);border-color:var(--ai-bd);color:var(--ai)}
+.st-tag.code{background:#EEF2F6;border-color:#D5DCE5;color:#3F4C5E}
+.st-would{margin:0;font-size:var(--p-small);line-height:1.3;color:var(--muted);padding-bottom:10px;border-bottom:1px dashed var(--line-cool)}
+.st-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;font-size:var(--p-body);line-height:1.3;overflow-wrap:anywhere}
+.st-body:empty{border-radius:12px;background:repeating-linear-gradient(135deg,rgba(207,212,236,.10) 0 10px,transparent 10px 20px)}
+.st.ghost .st-body{color:var(--muted)}
+/* results */
+.r-muted{color:var(--muted)}
+.r-big{font-weight:600;color:var(--ink)}
+.r-time{color:var(--muted);font-size:var(--p-small)}
+.r-chip{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;max-width:100%;padding:6px 12px;border-radius:10px;border:1px solid var(--line-cool);background:var(--surface-2);font-weight:600;line-height:1.2}
+.r-chip .ic{width:1.3em;height:1.3em}
+.r-chip.warn{background:var(--held-bg);border-color:var(--held-bd);color:var(--held)}
+.r-chip.warn .ic{color:var(--held)}
+.r-file{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.r-file .ic{width:1.5em;height:1.5em;margin-top:1px}
+.r-file b{font-weight:600}
+.r-h{font-weight:600;color:var(--muted)}
+.r-kv{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.r-kv li{line-height:1.25}
+.r-kv .k{color:var(--muted);margin-right:.35em}
+.r-kv .v{font-weight:600;font-variant-numeric:tabular-nums}
+.r-kv .bad{color:var(--stop)}
+.r-kv .nt{display:block;color:var(--held);font-weight:500}
+.r-flag{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:var(--held-bg);border:1px solid var(--held-bd);color:var(--held);font-weight:600;line-height:1.2}
+.r-flag .ic{width:1.4em;height:1.4em;color:var(--held);flex:none}
+.r-flag.stop{background:var(--stop-bg);border-color:var(--stop-bd);color:var(--stop)}
+.r-out{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;padding:7px 14px;border-radius:999px;border:1px solid;font-weight:600;line-height:1.15;white-space:nowrap}
+.r-out .ic{width:1.25em;height:1.25em;color:currentColor}
+.r-out.create{background:var(--create-bg);border-color:var(--create-bd);color:var(--create)}
+.r-out.patch{background:var(--patch-bg);border-color:var(--patch-bd);color:var(--patch)}
+.r-out.quiet{background:var(--quiet-bg);border-color:var(--quiet-bd);color:var(--quiet)}
+.r-out.held{background:var(--held-bg);border-color:var(--held-bd);color:var(--held)}
+.r-ck{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.r-ck li{display:flex;align-items:flex-start;gap:8px;line-height:1.25}
+.r-ck li .ic{width:1.3em;height:1.3em;flex:none;margin-top:-1px}
+.r-ck li b{font-weight:600}
+.r-ck li small{display:block;font-size:inherit;color:var(--muted);font-weight:400}
+.r-ck li.found .ic{color:var(--patch)}
+.r-ck li.derived{color:var(--muted)}
+.r-ck li.derived b{color:var(--ink)}
+.r-ck li.miss b{color:var(--stop)}
+.r-ck li.gate b{color:var(--held)}
+.r-row{border:1px solid var(--create-bd);background:var(--create-bg);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;box-shadow:inset 4px 0 0 var(--create)}
+.r-row .r-row-h,.r-cell .r-row-h{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--create)}
+.r-row .r-row-h .ic,.r-cell .r-row-h .ic{width:1.3em;height:1.3em;color:currentColor}
+.r-row .v{font-weight:600;color:var(--ink)}
+.r-cell{border:1px solid var(--patch-bd);background:var(--patch-bg);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.r-cell .r-row-h{color:var(--patch)}
+.r-cell s{color:var(--muted);text-decoration-thickness:2px}
+.r-cell .new{font-weight:700;color:var(--patch)}
+.r-link{display:inline-flex;align-items:center;gap:8px;color:var(--accent-deep);font-weight:600}
+.r-link .ic{width:1.3em;height:1.3em;color:var(--accent)}
+.r-ok{display:inline-flex;align-items:center;gap:8px;color:var(--muted)}
+.r-ok .ic{width:1.2em;height:1.2em}
+.r-none{border:1.5px dashed var(--line-cool);border-radius:12px;padding:12px;color:var(--muted);text-align:center}
+.r-dg{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:12px;border:1px solid}
+.r-dg .ic{width:1.3em;height:1.3em;flex:none;color:currentColor}
+.r-dg.create{background:var(--create-bg);border-color:var(--create-bd);color:var(--create)}
+.r-dg.patch{background:var(--patch-bg);border-color:var(--patch-bd);color:var(--patch)}
+.r-dg.quiet{background:var(--quiet-bg);border-color:var(--quiet-bd);color:var(--quiet)}
+/* token that rides the track */
+.ptoken{position:absolute;left:0;top:2px;z-index:6;height:40px;display:flex;align-items:center;gap:8px;padding:0 14px;border-radius:999px;background:var(--surface);border:2px solid var(--accent);box-shadow:var(--shadow-lift);font-weight:600;font-size:var(--p-small);white-space:nowrap;pointer-events:none;opacity:0}
+.ptoken .ic{width:24px;height:24px}
+.ptoken.stops{border-color:var(--held)}
+/* bottom: outcome banner + waiting list */
+.p-foot{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:var(--g);flex:none}
+.p-banner{display:flex;align-items:center;gap:14px;min-height:64px;padding:10px 18px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-size:var(--p-name);font-weight:600;line-height:1.25;color:var(--muted)}
+.p-banner .ic{width:36px;height:36px;flex:none;color:currentColor}
+.p-banner.works{background:var(--patch-bg);border-color:var(--patch-bd);color:var(--patch)}
+.p-banner.stops{background:var(--held-bg);border-color:var(--held);color:var(--held);box-shadow:0 0 0 4px rgba(154,69,8,.10)}
+.p-banner small{display:block;font-size:var(--p-body);font-weight:500;color:var(--ink);opacity:.8}
+.p-wait{border:1.5px dashed var(--held-bd);border-radius:14px;background:var(--surface);padding:8px 14px;display:flex;flex-direction:column;gap:4px;min-height:64px;justify-content:center}
+.p-wait-h{display:flex;align-items:center;gap:8px;color:var(--held);font-weight:600;font-size:var(--p-body)}
+.p-wait-h .ic{width:28px;height:28px;color:var(--held)}
+.p-wait-h .count{min-width:30px;height:30px;border-radius:999px;background:var(--held-bg);border:1px solid var(--held-bd);display:inline-grid;place-items:center;font:600 var(--p-small)/1 var(--sans);padding:0 8px}
+.p-wait ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.p-wait li{display:flex;align-items:center;gap:8px;font-size:var(--p-small);line-height:1.3}
+.p-wait li .ic{width:24px;height:24px;flex:none}
+.p-wait li.new{font-weight:600;color:var(--held)}
+.p-wait li.none{color:var(--muted)}
+.p-wait.on{border-style:solid;border-color:var(--held);box-shadow:0 0 0 4px rgba(154,69,8,.12)}
+.p-fly{position:absolute;z-index:8;pointer-events:none;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:var(--held-bg);border:1px solid var(--held);color:var(--held);font-weight:600;font-size:var(--p-small);box-shadow:var(--shadow-lift);white-space:nowrap}
+.p-fly .ic{width:24px;height:24px;color:var(--held)}
+/* controls: six scenario chips + Play all */
+.p-ctl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex:none}
+.p-grp{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.p-grp-h{font:600 var(--p-small)/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.p-grp + .p-grp{padding-left:12px;border-left:1px solid var(--line-cool)}
+.p-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:var(--fs-sm);box-shadow:0 1px 2px rgba(28,33,53,.05);transition:transform .18s var(--ease-out),box-shadow .18s}
+.p-chip:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift)}
+.p-chip .ic{width:22px;height:22px}
+.p-chip .n{font-weight:700;color:var(--muted)}
+.p-chip.works .ic{color:var(--patch)}
+.p-chip.stops .ic{color:var(--held)}
+.p-chip.cur{border-color:var(--accent);background:var(--tint);box-shadow:0 0 0 1px var(--accent)}
+.p-ctl .btn{margin-left:auto}
+
+/* present (1920x1080) */
+.present .pipe{--g:16px;--p-body:21px;--p-name:24px;--p-small:20px;--p-badge:52px;--p-title:28px;gap:16px;margin-top:18px;padding-bottom:22px}
+.present .views .seg button{font-size:20px;min-width:150px}
+.present .pipe-tag{font-size:20px;height:44px}
+.present .p-chip{font-size:20px;min-height:52px;padding:0 16px}
+.present .p-chip .ic{width:26px;height:26px}
+.present .ptoken{height:44px;font-size:20px}
+/* deck frame (present=1&frame=1, 1920x904): only the route and its result, type at 26 px and up */
+html.present.frame.view-pipe,html.present.frame.view-pipe body{height:904px}
+.present.frame.view-pipe .app{height:904px;padding:0 32px}
+html.frame.view-pipe .top,html.frame.view-pipe .views,html.frame.view-pipe .methods,html.frame.view-pipe .st-would,html.frame.view-pipe .p-ctl,html.frame.view-pipe .p-cap,html.frame.view-pipe .r-time{display:none!important}
+html.frame .pipe{--g:14px;--p-body:28px;--p-name:30px;--p-small:26px;--p-badge:56px;--p-title:34px;margin-top:16px;gap:14px;padding-bottom:20px}
+html.frame .p-num{width:56px;height:56px}
+html.frame .p-kind{height:50px;padding:0 18px}
+html.frame .p-kind .ic{width:30px;height:30px}
+html.frame .st{padding:14px 14px 16px}
+html.frame .r-out{padding:5px 10px;gap:5px;font-size:26px}
+html.frame .st-name{font-size:28px}
+html.frame .r-out .ic{width:1.1em;height:1.1em}
+html.frame .st-tag{font-size:26px;padding:3px 10px}
+html.frame .route{padding-top:50px}
+html.frame .track{top:22px}
+html.frame .st::before{top:-38px;width:24px;height:24px;margin-left:-12px}
+html.frame .st-stopmark{top:-50px;width:48px;height:48px;margin-left:-24px}
+html.frame .st-stopmark .ic{width:48px;height:48px}
+html.frame .p-foot{height:156px}
+html.frame .st-body{gap:10px;line-height:1.3}
+html.frame .r-ok,html.frame .r-link{font-size:var(--p-small);white-space:nowrap}
+html.frame .r-row,html.frame .r-cell{padding:8px 10px;gap:2px}
+html.frame .p-banner{min-height:96px;font-size:32px}
+html.frame .p-banner .ic{width:44px;height:44px}
+html.frame .p-banner small{display:none}
+html.frame .p-wait{min-height:96px}
+html.frame .p-wait-h{font-size:28px}
+html.frame .p-wait li{font-size:26px}
+html.frame .p-wait li .ic{width:30px;height:30px}
+html.frame .p-wait-h .count{font-size:26px;min-width:38px;height:38px}
+
+/* smaller screens: the route becomes a column, top to bottom */
+@media (max-width:1180px){
+  html:not(.present) .route{grid-template-columns:minmax(0,1fr);padding-top:0;gap:18px}
+  html:not(.present) .track,html:not(.present) .ptoken,html:not(.present) .st::before{display:none}
+  html:not(.present) .st:not(:last-child)::after{content:"";position:absolute;left:36px;bottom:-19px;width:3px;height:18px;background:var(--line-cool)}
+  html:not(.present) .st.done:not(:last-child)::after{background:var(--accent)}
+  html:not(.present) .st-stopmark{top:12px;left:auto;right:12px;margin:0}
+  html:not(.present) .st-body:empty{min-height:28px}
+  html:not(.present) .methods{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html:not(.present) .m-h{grid-column:1 / -1}
+  html:not(.present) .p-foot{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:760px){
+  html.view-pipe:not(.present) .top{height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}
+  html.view-pipe:not(.present) .views{position:static;transform:none;margin:10px 0 0}
+  html:not(.present) .views .seg{width:100%}
+  html:not(.present) .views .seg button{flex:1;min-width:0}
+  html:not(.present) .pipe-tag{white-space:normal;height:auto;min-height:32px;padding:6px 12px;line-height:1.3}
+  html:not(.present) .p-title{flex-wrap:wrap;row-gap:8px}
+  html:not(.present) .p-cap{flex-basis:100%}
+  html:not(.present) .p-ctl{display:grid;grid-template-columns:minmax(0,1fr)}
+  html:not(.present) .p-ctl{order:1}
+  html:not(.present) .p-title{order:2} html:not(.present) .p-foot{order:3} html:not(.present) .route{order:4}
+  html:not(.present) .p-grp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  html:not(.present) .p-grp-h{grid-column:1 / -1;margin:4px 0 0}
+  html:not(.present) .p-grp + .p-grp{padding-left:0;border-left:0}
+  html:not(.present) .p-chip{border-radius:12px;padding:6px 10px;justify-content:center}
+  html:not(.present) .p-ctl .btn{margin-left:0;width:100%;justify-content:center}
+  html:not(.present) .methods{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:420px){
+  html:not(.present) .brand{flex-wrap:wrap;row-gap:6px}
+  html:not(.present) .brand .chip.caps{display:none}
+}
+
 /* motion off: showStep frames, reduced motion */
 .no-anim *,.no-anim *::before,.no-anim *::after{transition:none!important;animation:none!important}
 @media (prefers-reduced-motion: reduce){
@@ -706,6 +941,15 @@ html.frame .ai-sum .num{font-size:88px}
 </g></symbol>
 </defs>
 </svg>
+<!-- pipeline-only symbols, drawn in the same style as the shared sprite (48x48, 1.75 round strokes, one pale fill) -->
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+<symbol id="i-folder" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,1.75)"><path d="M5 13a3 3 0 0 1 3-3h10l4 4.5h18a3 3 0 0 1 3 3V37a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z" fill="#E4E7FA"/><path d="M5 20h38"/><path d="M17 30h14"/></g></symbol>
+<symbol id="i-doc-scan" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,1.75)"><path d="M13 5h15l9 9v27a2 2 0 0 1-2 2H13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" fill="#FFFFFF"/><path d="M28 5v9h9"/><rect x="6" y="22" width="36" height="6" rx="2" fill="#E4E7FA"/><path d="M16 16h8M16 33h14M16 38h9"/></g></symbol>
+<symbol id="i-code-check" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,1.75)"><path d="M22 42H10a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h17l8 8v6" fill="#FFFFFF"/><path d="M27 6v8h8"/><path d="M13 16h8M13 22h10M13 28h6"/><circle cx="31" cy="31" r="9" fill="#E3F3E1"/><path d="M27.3 31.2l2.6 2.6 4.8-5.2"/><path d="M37.6 37.6L43 43"/></g></symbol>
+<symbol id="i-hand" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,1.75)"><path d="M15.5 31V13.5a2.5 2.5 0 0 1 5 0V23V10a2.5 2.5 0 0 1 5 0v13V12a2.5 2.5 0 0 1 5 0v12.5V17a2.5 2.5 0 0 1 5 0v12c0 7.7-5.2 13-12.5 13H22c-4.6 0-7.4-2-9.8-5.8L8 29.6a2.6 2.6 0 0 1 4.4-2.8z" fill="#FCEFD9"/></g></symbol>
+<symbol id="i-cross" viewBox="0 0 48 48"><g fill="none" stroke="#B4233C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,1.75)"><circle cx="24" cy="24" r="17" fill="#FDE8EB"/><path d="M18.5 18.5l11 11M29.5 18.5l-11 11"/></g></symbol>
+<symbol id="i-link" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="stroke-width:var(--sw,1.75)"><path d="M19 29l10-10"/><path d="M21.5 15.5l3-3a7 7 0 0 1 10 10l-3 3"/><path d="M26.5 32.5l-3 3a7 7 0 0 1-10-10l3-3"/></g></symbol>
+</defs></svg>
 <div class="app" id="app">
   <header class="top">
     <div class="brand">
@@ -727,8 +971,27 @@ html.frame .ai-sum .num{font-size:88px}
         <button role="radio" data-speed="2" aria-checked="false" tabindex="-1">2x</button>
       </div>
     </div>
+    <span class="pipe-tag" id="pipeTag"><svg class="ic" aria-hidden="true"><use href="#i-plug-dashed"/></svg>Mockup · nothing connected · synthetic data</span>
   </header>
+  <nav class="views" aria-label="View"><div class="seg" role="tablist" id="viewTabs"><button role="tab" id="tab-pipe" data-view="pipe" aria-selected="true" tabindex="0">Scenarios</button><button role="tab" id="tab-night" data-view="night" aria-selected="false" tabindex="-1">Whole night</button></div></nav>
   <div class="strip" id="strip"><svg class="ic" aria-hidden="true"><use href="#i-plug-dashed"/></svg><span id="stripText">Mockup. Nothing is connected. Emails, loads and the sheet are made up.</span></div>
+  <section class="pipe" id="pipe" aria-labelledby="pipeH">
+    <h2 class="sr" id="pipeH">Six synthetic emails on one fixed route</h2>
+    <div class="methods" id="methods" aria-label="The four methods for automation"><span class="m-h">Method</span><div class="method"><span><b>Rules-Based (If-Then)</b></span></div><div class="method"><span><b>Machine Learning (Predict Y using X)</b></span></div><div class="method on" aria-current="true"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>LLM-Based Automated Workflow</b>Ours: fixed steps, one AI step, not an agent</span></div><div class="method"><span><b>LLM-Based Autonomous Agent</b>Not used here</span></div></div>
+    <div class="p-title" id="pTitle" aria-live="polite"></div>
+    <div class="route" id="route">
+      <div class="track" aria-hidden="true"><span class="track-on" id="trackOn"></span></div>
+    </div>
+    <div class="p-foot">
+      <div class="p-banner" id="pBanner" aria-live="polite"></div>
+      <div class="p-wait" id="pWait"></div>
+    </div>
+    <div class="p-ctl">
+      <div class="p-grp" role="toolbar" aria-label="Scenarios that work" id="pWorks"></div>
+      <div class="p-grp" role="toolbar" aria-label="Scenarios that stop" id="pStops"></div>
+      <button class="btn primary" id="pPlay" type="button">Play all</button>
+    </div>
+  </section>
   <div class="arc" id="arc" aria-label="Night progress"><svg id="arcSvg" role="img" aria-label="Progress through tonight's emails, from night to 7:00 am"></svg></div>
   <main class="stage" id="stage">
     <svg class="flow" id="flow" aria-hidden="true">
@@ -770,7 +1033,7 @@ html.frame .ai-sum .num{font-size:88px}
     <p><a href="under-the-hood.html" target="_blank" rel="noopener">96.7% right calls on the 30-email synthetic answer key: see the scored version<svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
   </footer>
 </div>
-<script id="mockdata" type="application/json">{"freight":{"cases":[{"id":"M002","time":"Thu 9:32 pm","clock":"9:32 pm","night":1,"fromName":"Cascade Logistics","fromEmail":"ops@cascadelogistics.example","subject":"NL-1048 appointment moved to 10:00","body":"Appointment for NL-1048 moved from 08:00 to 10:00 at Seattle DC tomorrow. Please update the Master.","attach":null,"reason":"NL-1048 Seattle DC appointment moved from 08:00 to 10:00 on 9/25.","conf":"0.91","confNote":"recorded AI run","rail":"Appointment moved","variant":"a68","row":"R02","outcome":"patch","change":{"kind":"cell","rowId":"R02","col":"appt","colLabel":"Appt","from":"9/25 08:00","to":"9/25 10:00"}},{"id":"M003","time":"Thu 9:45 pm","clock":"9:45 pm","night":1,"fromName":"Logistics Digest","fromEmail":"news@logisticsdigest.example","subject":"Your weekly freight digest","body":"Top stories in freight tech this week: autonomous yard trucks, the spot rate index update, and a webinar on detention. Read online or...","attach":null,"reason":"Weekly newsletter with no load content.","conf":"0.98","confNote":"recorded AI run","rail":"Newsletter","variant":"quiet","row":null,"outcome":"quiet"},{"id":"M004","time":"Thu 10:03 pm","clock":"10:03 pm","night":1,"fromName":"Ridgeline Warehouse Services","fromEmail":"billing@ridgelinewarehouse.example","subject":"Invoice reminder NL-1039","body":"Friendly reminder that the invoice for NL-1039 is now due. Please pay $2,450 by Friday or let us know if there is a dispute.","attach":null,"reason":"Invoice for NL-1039 due, $2,450 payment requested; money decisions go to the morning queue.","conf":"0.97","confNote":"recorded AI run","rail":"Invoice","variant":"held","row":"R06","outcome":"held","tag":{"icon":"i-coin","text":"Stays with a person: money"},"tray":{"icon":"i-coin","text":"NL-1039 · invoice $2,450 · money"},"heldRows":["R06"]},{"id":"M005","time":"Thu 10:18 pm","clock":"10:18 pm","night":1,"fromName":"Metro Retail DC","fromEmail":"receiving@metroretail.example","subject":"NL-1051 delivered - POD attached","body":"NL-1051 delivered to Metro Retail DC at 21:55. POD on file. Update status to Delivered.","attach":null,"reason":"NL-1051 delivered 21:55 with POD on file; In Transit moves to Delivered.","conf":"0.94","confNote":"recorded AI run","rail":"Delivered","variant":"a60","row":"R03","outcome":"patch","change":{"kind":"cell","rowId":"R03","col":"status","colLabel":"Status","from":"In Transit","to":"Delivered"}},{"id":"M015","time":"Fri 3:12 am","clock":"3:12 am","night":1,"fromName":"Olympic Seafood Exports","fromEmail":"bookings@olympicseafood.example","subject":"Rate Confirmation NL-1074 - SEA to PDX, Mon 9/28","body":"Attached is the signed rate confirmation for NL-1074, Seattle cold storage to Portland, Monday 9/28 pickup 07:00. Reefer at -10F, 22...","attach":"Rate confirmation attached","reason":"Signed rate confirmation for new load NL-1074 SEA-PDX, Mon 9/28 07:00 pickup; not in Master.","conf":"0.93","confNote":"recorded AI run","rail":"New load","variant":"a68","row":"R15","outcome":"create","change":{"kind":"append","rowId":"R15","cells":{"load":"NL-1074","shipper":"Olympic Seafood Exports","lane":"SEA-PDX","status":"Confirmed","appt":"9/28 07:00"}}},{"id":"M024","time":"Fri 10:47 pm","clock":"10:47 pm","night":2,"fromName":"CarrierLink Portal","fromEmail":"no-reply@carrierlinkportal.example","subject":"Action required: session expired - POD ready for NL-1058","body":"A proof of delivery document for load NL-1058 (Blue Peak Logistics) is ready to view. Your portal session has expired. Sign in and complete...","attach":null,"reason":"NL-1058 POD sits behind expired portal session and two-factor login; needs a human present.","conf":"0.95","confNote":"recorded AI run","rail":"Portal login","variant":"held","row":"R12","outcome":"held","tag":{"icon":"i-lock","text":"Stays with a person: logins"},"tray":{"icon":"i-lock","text":"NL-1058 · portal login · logins"},"heldRows":["R12"]},{"id":"M026","time":"Fri 11:33 pm","clock":"11:33 pm","night":2,"fromName":"Cascade Logistics","fromEmail":"ops@cascadelogistics.example","subject":"two things - 1069 and 1048","body":"Hey - two things. NL-1069 Seattle-Spokane is a GO, shipper signed off, pickup Wednesday, we'll send the paperwork. And NL-1048 delivered to...","attach":null,"reason":"Single message carries updates for two loads (NL-1069 go-ahead, NL-1048 delivered); cannot route to one row.","conf":"0.88","confNote":"recorded AI run","rail":"Two loads","variant":"held","row":"R14","outcome":"ask","tag":{"icon":"i-split","text":"Unclear: two loads in one email"},"tray":{"icon":"i-split","text":"NL-1069 and NL-1048 · two loads in one email · unclear"},"splitTags":["NL-1069","NL-1048"],"heldRows":["R14","R02"]}],"rows":[{"id":"R01","c":{"load":"NL-1042","shipper":"Pacific Ship Co","lane":"SEA-TAC","status":"Booked","appt":"9/26 08:00"}},{"id":"R02","c":{"load":"NL-1048","shipper":"Cascade Logistics","lane":"BLI-SEA","status":"Dispatched","appt":"9/25 08:00"}},{"id":"R03","c":{"load":"NL-1051","shipper":"Metro Retail DC","lane":"PDX-SEA","status":"In Transit","appt":""}},{"id":"R04","c":{"load":"NL-1055","shipper":"Inland Routes","lane":"GEG-BOI","status":"Quoted","appt":""}},{"id":"R05","c":{"load":"NL-1044","shipper":"Blue Peak Logistics","lane":"SEA-BOI","status":"In Transit","appt":""}},{"id":"R06","c":{"load":"NL-1039","shipper":"Harborline Partners","lane":"PDX-EUG","status":"Delivered","appt":""}},{"id":"R07","c":{"load":"NL-1033","shipper":"Harborline Partners","lane":"SEA-YKM","status":"Cancelled","appt":""}},{"id":"R08","c":{"load":"NL-1060","shipper":"Pacific Ship Co","lane":"TAC-PDX","status":"Planning","appt":""}},{"id":"R09","c":{"load":"NL-1040","shipper":"Metro Retail DC","lane":"SEA-PDX","status":"Delivered","appt":""}},{"id":"R10","c":{"load":"NL-1063","shipper":"Evergreen Produce Co","lane":"YKM-SEA","status":"Confirmed","appt":"9/25 22:00"}},{"id":"R11","c":{"load":"NL-1066","shipper":"Summit Building Supply","lane":"BOI-GEG","status":"Booked","appt":"9/28 09:00"}},{"id":"R12","c":{"load":"NL-1058","shipper":"Blue Peak Logistics","lane":"PDX-BOI","status":"Delivered","appt":""}},{"id":"R13","c":{"load":"NL-1071","shipper":"Rainier Paper Mills","lane":"TAC-PDX","status":"Confirmed","appt":"9/26 03:00"}},{"id":"R14","c":{"load":"NL-1069","shipper":"Cascade Logistics","lane":"SEA-GEG","status":"Quoted","appt":""}}],"changed":[{"icon":"i-cell-pencil","cls":"patch","text":"NL-1048 appt 08:00 to 10:00"},{"icon":"i-cell-pencil","cls":"patch","text":"NL-1051 now Delivered"},{"icon":"i-row-plus","cls":"create","text":"NL-1074 added"}],"heldLines":[{"icon":"i-coin","text":"NL-1039 · invoice $2,450 · money"},{"icon":"i-lock","text":"NL-1058 · portal login · logins"},{"icon":"i-split","text":"NL-1069 and NL-1048 · two loads in one email"}]}}</script>
+<script id="mockdata" type="application/json">{"freight":{"cases":[{"id":"M002","time":"Thu 9:32 pm","clock":"9:32 pm","night":1,"fromName":"Cascade Logistics","fromEmail":"ops@cascadelogistics.example","subject":"NL-1048 appointment moved to 10:00","body":"Appointment for NL-1048 moved from 08:00 to 10:00 at Seattle DC tomorrow. Please update the Master.","attach":null,"reason":"NL-1048 Seattle DC appointment moved from 08:00 to 10:00 on 9/25.","conf":"0.91","confNote":"recorded AI run","rail":"Appointment moved","variant":"a68","row":"R02","outcome":"patch","change":{"kind":"cell","rowId":"R02","col":"appt","colLabel":"Appt","from":"9/25 08:00","to":"9/25 10:00"}},{"id":"M003","time":"Thu 9:45 pm","clock":"9:45 pm","night":1,"fromName":"Logistics Digest","fromEmail":"news@logisticsdigest.example","subject":"Your weekly freight digest","body":"Top stories in freight tech this week: autonomous yard trucks, the spot rate index update, and a webinar on detention. Read online or...","attach":null,"reason":"Weekly newsletter with no load content.","conf":"0.98","confNote":"recorded AI run","rail":"Newsletter","variant":"quiet","row":null,"outcome":"quiet"},{"id":"M004","time":"Thu 10:03 pm","clock":"10:03 pm","night":1,"fromName":"Ridgeline Warehouse Services","fromEmail":"billing@ridgelinewarehouse.example","subject":"Invoice reminder NL-1039","body":"Friendly reminder that the invoice for NL-1039 is now due. Please pay $2,450 by Friday or let us know if there is a dispute.","attach":null,"reason":"Invoice for NL-1039 due, $2,450 payment requested; money decisions go to the morning queue.","conf":"0.97","confNote":"recorded AI run","rail":"Invoice","variant":"held","row":"R06","outcome":"held","tag":{"icon":"i-coin","text":"Stays with a person: money"},"tray":{"icon":"i-coin","text":"NL-1039 · invoice $2,450 · money"},"heldRows":["R06"]},{"id":"M005","time":"Thu 10:18 pm","clock":"10:18 pm","night":1,"fromName":"Metro Retail DC","fromEmail":"receiving@metroretail.example","subject":"NL-1051 delivered - POD attached","body":"NL-1051 delivered to Metro Retail DC at 21:55. POD on file. Update status to Delivered.","attach":null,"reason":"NL-1051 delivered 21:55 with POD on file; In Transit moves to Delivered.","conf":"0.94","confNote":"recorded AI run","rail":"Delivered","variant":"a60","row":"R03","outcome":"patch","change":{"kind":"cell","rowId":"R03","col":"status","colLabel":"Status","from":"In Transit","to":"Delivered"}},{"id":"M015","time":"Fri 3:12 am","clock":"3:12 am","night":1,"fromName":"Olympic Seafood Exports","fromEmail":"bookings@olympicseafood.example","subject":"Rate Confirmation NL-1074 - SEA to PDX, Mon 9/28","body":"Attached is the signed rate confirmation for NL-1074, Seattle cold storage to Portland, Monday 9/28 pickup 07:00. Reefer at -10F, 22...","attach":"Rate confirmation attached","reason":"Signed rate confirmation for new load NL-1074 SEA-PDX, Mon 9/28 07:00 pickup; not in Master.","conf":"0.93","confNote":"recorded AI run","rail":"New load","variant":"a68","row":"R15","outcome":"create","change":{"kind":"append","rowId":"R15","cells":{"load":"NL-1074","shipper":"Olympic Seafood Exports","lane":"SEA-PDX","status":"Confirmed","appt":"9/28 07:00"}}},{"id":"M024","time":"Fri 10:47 pm","clock":"10:47 pm","night":2,"fromName":"CarrierLink Portal","fromEmail":"no-reply@carrierlinkportal.example","subject":"Action required: session expired - POD ready for NL-1058","body":"A proof of delivery document for load NL-1058 (Blue Peak Logistics) is ready to view. Your portal session has expired. Sign in and complete...","attach":null,"reason":"NL-1058 POD sits behind expired portal session and two-factor login; needs a human present.","conf":"0.95","confNote":"recorded AI run","rail":"Portal login","variant":"held","row":"R12","outcome":"held","tag":{"icon":"i-lock","text":"Stays with a person: logins"},"tray":{"icon":"i-lock","text":"NL-1058 · portal login · logins"},"heldRows":["R12"]},{"id":"M026","time":"Fri 11:33 pm","clock":"11:33 pm","night":2,"fromName":"Cascade Logistics","fromEmail":"ops@cascadelogistics.example","subject":"two things - 1069 and 1048","body":"Hey - two things. NL-1069 Seattle-Spokane is a GO, shipper signed off, pickup Wednesday, we'll send the paperwork. And NL-1048 delivered to...","attach":null,"reason":"Single message carries updates for two loads (NL-1069 go-ahead, NL-1048 delivered); cannot route to one row.","conf":"0.88","confNote":"recorded AI run","rail":"Two loads","variant":"held","row":"R14","outcome":"ask","tag":{"icon":"i-split","text":"Unclear: two loads in one email"},"tray":{"icon":"i-split","text":"NL-1069 and NL-1048 · two loads in one email · unclear"},"splitTags":["NL-1069","NL-1048"],"heldRows":["R14","R02"]}],"rows":[{"id":"R01","c":{"load":"NL-1042","shipper":"Pacific Ship Co","lane":"SEA-TAC","status":"Booked","appt":"9/26 08:00"}},{"id":"R02","c":{"load":"NL-1048","shipper":"Cascade Logistics","lane":"BLI-SEA","status":"Dispatched","appt":"9/25 08:00"}},{"id":"R03","c":{"load":"NL-1051","shipper":"Metro Retail DC","lane":"PDX-SEA","status":"In Transit","appt":""}},{"id":"R04","c":{"load":"NL-1055","shipper":"Inland Routes","lane":"GEG-BOI","status":"Quoted","appt":""}},{"id":"R05","c":{"load":"NL-1044","shipper":"Blue Peak Logistics","lane":"SEA-BOI","status":"In Transit","appt":""}},{"id":"R06","c":{"load":"NL-1039","shipper":"Harborline Partners","lane":"PDX-EUG","status":"Delivered","appt":""}},{"id":"R07","c":{"load":"NL-1033","shipper":"Harborline Partners","lane":"SEA-YKM","status":"Cancelled","appt":""}},{"id":"R08","c":{"load":"NL-1060","shipper":"Pacific Ship Co","lane":"TAC-PDX","status":"Planning","appt":""}},{"id":"R09","c":{"load":"NL-1040","shipper":"Metro Retail DC","lane":"SEA-PDX","status":"Delivered","appt":""}},{"id":"R10","c":{"load":"NL-1063","shipper":"Evergreen Produce Co","lane":"YKM-SEA","status":"Confirmed","appt":"9/25 22:00"}},{"id":"R11","c":{"load":"NL-1066","shipper":"Summit Building Supply","lane":"BOI-GEG","status":"Booked","appt":"9/28 09:00"}},{"id":"R12","c":{"load":"NL-1058","shipper":"Blue Peak Logistics","lane":"PDX-BOI","status":"Delivered","appt":""}},{"id":"R13","c":{"load":"NL-1071","shipper":"Rainier Paper Mills","lane":"TAC-PDX","status":"Confirmed","appt":"9/26 03:00"}},{"id":"R14","c":{"load":"NL-1069","shipper":"Cascade Logistics","lane":"SEA-GEG","status":"Quoted","appt":""}}],"changed":[{"icon":"i-cell-pencil","cls":"patch","text":"NL-1048 appt 08:00 to 10:00"},{"icon":"i-cell-pencil","cls":"patch","text":"NL-1051 now Delivered"},{"icon":"i-row-plus","cls":"create","text":"NL-1074 added"}],"heldLines":[{"icon":"i-coin","text":"NL-1039 · invoice $2,450 · money"},{"icon":"i-lock","text":"NL-1058 · portal login · logins"},{"icon":"i-split","text":"NL-1069 and NL-1048 · two loads in one email"}]},"pipeline":{"scenarios":[{"id":"s1","n":1,"message_id":"M015","works":true,"short":"Rate confirmation","stopAt":null,"fromName":"Olympic Seafood Exports","fromEmail":"bookings@olympicseafood.example","time":"Fri 3:12 am","subject":"Rate Confirmation NL-1074 - SEA to PDX, Mon 9/28","body":"Attached is the signed rate confirmation for NL-1074, Seattle cold storage to Portland, Monday 9/28 pickup 07:00. Reefer at -10F, 22 pallets frozen. Please add it to your board. Thanks, Dana - Olympic Seafood bookings","attachment_text":"RATE CONFIRMATION\nOlympic Seafood Exports - Booking Desk\nLoad ID: NL-1074    Shipper Ref: OSE-20931\nOrigin: SEA - Seattle cold storage, dock 7\nDestination: PDX - Portland distribution center, door 9\nPickup Appointment: 2026-09-28 07:00 local (driver check-in 06:30)\nDelivery Window: 2026-09-28 14:00 - 16:00 local\nEquipment: 53' reefer, continuous run, set point -10F\nCommodity: frozen seafood, 22 pallets, approx 38,000 lbs\nLinehaul Rate: $1,150.00 all-in, fuel included\nPayment Terms: Net 30 on receipt of signed POD\nSpecial Instructions: temp recorder required; driver checks in at cold storage office; no partial unloads.\nAccepted by: Northline Freight dispatch (electronic acceptance)  Date: 2026-09-24","attach":"PDF attached","attachKind":"rate con","file":"Olympic Seafood Exports rate con.pdf","ai":{"action":"create","row_id":null,"gate":null,"fields":{"load_id":"NL-1074","shipper":"Olympic Seafood Exports","lane":"SEA-PDX","status":"Confirmed","appt_local":"2026-09-28 07:00"},"rationale":"Signed rate confirmation for new load NL-1074 SEA-PDX, Mon 9/28 07:00 pickup; not in Master."},"rowBefore":null,"idInMail":"NL-1074","amount":"","rowLoad":"","caption":"A rate confirmation PDF becomes a new row."},{"id":"s2","n":2,"message_id":"M005","works":true,"short":"Delivery email","stopAt":null,"fromName":"Metro Retail DC","fromEmail":"receiving@metroretail.example","time":"Thu 10:18 pm","subject":"NL-1051 delivered - POD attached","body":"NL-1051 delivered to Metro Retail DC at 21:55. POD on file. Update status to Delivered.","attachment_text":"","attach":"Delivery proof attached","attachKind":"POD","file":"Metro Retail DC POD.pdf","ai":{"action":"patch","row_id":"R03","gate":null,"fields":{"status":"Delivered"},"rationale":"NL-1051 delivered 21:55 with POD on file; In Transit moves to Delivered."},"rowBefore":{"id":"R03","load":"NL-1051","status":"In Transit","appt":"","shipper":"Metro Retail DC","lane":"PDX-SEA"},"idInMail":"NL-1051","amount":"","rowLoad":"NL-1051","caption":"A delivery email. Fix a cell: the status becomes Delivered."},{"id":"s3","n":3,"message_id":"M003","works":true,"short":"Newsletter","stopAt":null,"fromName":"Logistics Digest","fromEmail":"news@logisticsdigest.example","time":"Thu 9:45 pm","subject":"Your weekly freight digest","body":"Top stories in freight tech this week: autonomous yard trucks, the spot rate index update, and a webinar on detention. Read online or unsubscribe below.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"quiet","row_id":null,"gate":null,"fields":null,"rationale":"Weekly newsletter with no load content."},"rowBefore":null,"idInMail":"","amount":"","rowLoad":"","caption":"A newsletter. Nothing to do, so no write."},{"id":"s4","n":4,"message_id":"M028","works":false,"short":"Smudged scan","stopAt":"claude","fromName":"Columbia Grain Co-op","fromEmail":"logistics@columbiagrain.example","time":"Sat 1:10 am","subject":"Rate confirmation - scanned copy","body":"Scanned rate con attached for the Pasco to Tacoma grain load picking up Wednesday 9/30. Our scanner is acting up tonight, sorry for the quality of the copy.","attachment_text":"[scanned document - OCR extraction, low quality]\nCOLUMBIA GRAIN CO-OP   RATE CONF1RMATION\nLoad ID: NL-1#?# (digits smudged / illegible)\nCo-op Ref: CGC-2209-A\nOrigin: PSC - co-op elevator, Pasco\nDestination: TAC - export terminal, Tacoma\nPickup Appt: 2026-09-30 10:00 local\nEquipment: hopper bottom, 2 compartments, food-grade washout required\nCommodity: soft white wheat, approx 50,000 lbs\nRate: $1,3?0.00 (partially illegible)\nTerms: Net 30\nSignature: [illegible]   Date: [illegible]\n[end of extraction - 3 lines could not be recognized]","attach":"Scanned PDF attached","attachKind":"rate con","file":"Columbia Grain Co-op rate con scan.pdf","ai":{"action":"escalate","row_id":null,"gate":null,"fields":null,"rationale":"Scanned rate con with illegible load id and partial rate; cannot create a row without a readable id."},"rowBefore":null,"idInMail":"","amount":"","rowLoad":"","caption":"A smudged scan. The load ID is not readable: ask a person.","why":"Load ID not readable.","ask":{"text":"Asks a person: the scan is poor and the load ID is not readable.","tray":"Columbia Grain Co-op · smudged scan · load ID not readable","icon":"i-doc-scan"}},{"id":"s5","n":5,"message_id":"M023","works":false,"short":"Letter O in the ID","stopAt":"claude","fromName":"Northline Night Dispatch","fromEmail":"dispatch@northline.example","time":"Fri 10:18 pm","subject":"NL-1O71 Rainier Paper - driver assigned","body":"Driver assigned on NL-1O71 for Rainier Paper Mills, Tacoma to Portland. Unit 418, loading Tacoma 23:30 tonight, running straight thru for the 03:00 Portland drop. Will ping you when he is loaded.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"escalate","row_id":"R13","gate":null,"fields":null,"rationale":"Load id written NL-1O71 (letter O) does not match exactly; details fit NL-1071 but typo requires human confirmation."},"rowBefore":null,"idInMail":"NL-1O71","amount":"","rowLoad":"NL-1071","caption":"The load ID has a letter O, not a zero: ask a person.","why":"NL-1O71 is close to NL-1071, but not exact.","ask":{"text":"Asks a person: NL-1O71 has a letter O, not a zero.","tray":"NL-1O71 · letter O, not a zero · unclear","icon":"i-cross"}},{"id":"s6","n":6,"message_id":"M004","works":false,"short":"Invoice","stopAt":"claude","fromName":"Ridgeline Warehouse Services","fromEmail":"billing@ridgelinewarehouse.example","time":"Thu 10:03 pm","subject":"Invoice reminder NL-1039","body":"Friendly reminder that the invoice for NL-1039 is now due. Please pay $2,450 by Friday or let us know if there is a dispute.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"escalate","row_id":"R06","gate":"G1","fields":null,"rationale":"Invoice for NL-1039 due, $2,450 payment requested; money decisions go to the morning queue."},"rowBefore":null,"idInMail":"NL-1039","amount":"$2,450","rowLoad":"NL-1039","caption":"An invoice for $2,450. Money stays with a person.","why":"Money: a $2,450 invoice.","ask":{"text":"Asks a person: a $2,450 invoice. Money stays with a person.","tray":"NL-1039 · invoice $2,450 · money","icon":"i-coin"}}],"sheet":[{"id":"R01","load":"NL-1042","status":"Booked"},{"id":"R02","load":"NL-1048","status":"Dispatched"},{"id":"R03","load":"NL-1051","status":"In Transit"},{"id":"R04","load":"NL-1055","status":"Quoted"},{"id":"R05","load":"NL-1044","status":"In Transit"},{"id":"R06","load":"NL-1039","status":"Delivered"},{"id":"R07","load":"NL-1033","status":"Cancelled"},{"id":"R08","load":"NL-1060","status":"Planning"},{"id":"R09","load":"NL-1040","status":"Delivered"},{"id":"R10","load":"NL-1063","status":"Confirmed"},{"id":"R11","load":"NL-1066","status":"Booked"},{"id":"R12","load":"NL-1058","status":"Delivered"},{"id":"R13","load":"NL-1071","status":"Confirmed"},{"id":"R14","load":"NL-1069","status":"Quoted"}]}}</script>
 <script>
 (function () {
 'use strict';
@@ -1603,6 +1866,16 @@ elSheet.addEventListener('click', function (e) {
 document.addEventListener('keydown', function (e) {
   if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
   var t = e.target, onControl = t && (t.closest && t.closest('button, a, input, select, textarea, [role=tab], [role=radio]'));
+  if (VIEW === 'pipe') {
+    if (e.key === ' ' && !onControl) { e.preventDefault(); $('#pPlay').click(); }
+    else if ((e.key === 'r' || e.key === 'R') && !onControl) pReset();
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      var onChip = t && t.closest && t.closest('[data-sc]'); if (onControl && !onChip) return;
+      var j = PS.i < 0 ? (e.key === 'ArrowRight' ? 0 : SC.length - 1) : Math.max(0, Math.min(SC.length - 1, PS.i + (e.key === 'ArrowRight' ? 1 : -1)));
+      e.preventDefault(); showScenario(j).then(function () { root.classList.remove('no-anim'); var f = $('[data-sc="' + j + '"]'); if (onChip && f) f.focus(); });
+    }
+    return;
+  }
   if (e.key === ' ' && !onControl) { e.preventDefault(); if (run && run.playing) pause(); else play({ speed: SPEED, fromStart: doneFlag }); }
   else if ((e.key === 'r' || e.key === 'R') && !onControl) { reset(); }
   else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !onControl) {
@@ -1617,7 +1890,8 @@ document.addEventListener('keydown', function (e) {
 /* ---------------- sizing ---------------- */
 function fit() {
   if (PRESENT) {
-    scaleK = Math.min(window.innerWidth / 1920, window.innerHeight / 1080) || 1;
+    var canvasH = FRAME && VIEW === 'pipe' ? 904 : 1080; // deck frames of the Scenarios view are 1920x904
+    scaleK = Math.min(window.innerWidth / 1920, window.innerHeight / canvasH) || 1;
     if (Math.abs(scaleK - 1) < 0.002) scaleK = 1;
     app.style.transform = scaleK === 1 ? '' : 'scale(' + scaleK + ')';
   }
@@ -1628,17 +1902,356 @@ window.addEventListener('resize', fit);
 if (window.ResizeObserver) { var ro = new ResizeObserver(function () { if (cur.S) layoutFlow(); }); Object.keys(lanes).forEach(function (k) { ro.observe(lanes[k]); }); }
 if (MOBILE.addEventListener) MOBILE.addEventListener('change', function () { html = {}; if (cur.S) render(cur.S, { animate: false }); fit(); });
 
+/* =====================================================================================================
+   Scenarios view: one fixed route, seven stations. The PDF reader and the check below are plain code that run on the
+   synthetic email and PDF text; the decision and fields are the recorded AI run. Nothing here is connected.
+   ===================================================================================================== */
+var PD = RAW.pipeline || { scenarios: [], sheet: [] };
+var SC = PD.scenarios || [];
+var SHEET = PD.sheet || [];
+var SHEET_IDS = SHEET.map(function (r) { return r.load; });
+var STATIONS = [
+  { k: 'gmail', name: 'Gmail', icon: 'i-envelope', tag: 'connector', would: 'Would use: Gmail, read-only.' },
+  { k: 'drive', name: 'Drive', icon: 'i-folder', tag: 'connector', would: 'Would use: Google Drive, one folder.' },
+  { k: 'reader', name: 'PDF reader', icon: 'i-doc-scan', tag: 'code', tagCls: 'code', would: 'Would use: code. Text from the PDF, OCR for scans.' },
+  { k: 'claude', name: 'Claude', icon: 'i-spark', tag: 'AI step', tagCls: 'ai', would: 'Would use: Claude API. One call per email, fixed fields.' },
+  { k: 'check', name: 'Check', icon: 'i-code-check', tag: 'code · pilot', tagCls: 'code', would: 'Pilot step, not in the scored run. Code: every copied value must be in the source.' },
+  { k: 'sheets', name: 'Sheets', icon: 'i-sheet', tag: 'MCP connector', would: 'Would use: Google Sheets via MCP, a standard plug. New rows and cell edits only.' },
+  { k: 'digest', name: 'Digest', icon: 'i-phone', tag: '7:00', would: 'Would use: a digest at 7:00.' }
+];
+var SI = {}; STATIONS.forEach(function (s, i) { SI[s.k] = i; });
+var HOLD = [1.15, 0.95, 1.15, 1.45, 1.35, 1.45, 1.05]; // seconds each station holds its result at speed 1
+var ACT = { create: 'create', patch: 'patch', quiet: 'quiet', escalate: 'held' };
+var VIEW = (Q.get('view') === 'night' || Q.get('case') || Q.get('business')) ? 'night' : 'pipe';
+
+function reEsc(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+// exact match of a copied value in the source text, not inside a longer word or code (SEA must not match SEAT)
+function inText(src, v) { if (!v) return false; return new RegExp('(^|[^A-Za-z0-9])' + reEsc(v) + '(?=$|[^A-Za-z0-9])').test(src || ''); }
+function apFmt(v) { var m = /^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})$/.exec(v || ''); return m ? (+m[1]) + '/' + (+m[2]) + ' ' + m[3] : (v || ''); }
+function stopIdx(sc) { return sc.works ? STATIONS.length - 1 : SI[sc.stopAt]; }
+// where the token stops moving: a stop is decided at Claude, and the check still shows its result after it ("Code agrees")
+function endIdx(sc) { return sc.works ? STATIONS.length - 1 : Math.max(SI[sc.stopAt], SI.check); }
+// a letter O inside a load ID (NL-1O71) is marked, so the room can see it is not a zero
+function hl(s) { return esc(s).replace(/NL-[0-9A-Z#?]+/g, function (m) { return '<span class="nw">' + m.replace(/O/g, '<span class="oh">O</span>') + '</span>'; }).replace(/\b(\d{1,2}\/\d{1,2}) (\d{2}:\d{2})\b/g, '<span class="nw">$1 $2</span>'); }
+
+/* the PDF reader (code): text from the PDF; a scan is flagged when the OCR says the quality is low */
+function readPdf(sc) {
+  var t = sc.attachment_text || '';
+  if (!sc.attach) return { kind: 'none', lines: [] };
+  if (!t) return { kind: 'image', lines: [] };
+  var first = t.split('\n')[0], scan = /^\[scanned document/i.test(first);
+  var want = [['Load ID', /^Load ID:\s*(.+)$/im], ['Origin', /^Origin:\s*(.+)$/im], ['Destination', /^Destination:\s*(.+)$/im], ['Pickup', /^Pickup(?: Appointment| Appt)?:\s*(.+)$/im]];
+  var lines = [];
+  want.forEach(function (w) {
+    var m = w[1].exec(t); if (!m) return;
+    var raw = m[1], v = raw.split(/\s{2,}| - |\s\(/)[0].replace(/\s+local\b.*$/i, '').trim(), note = (raw.match(/\(([^)]*)\)/) || [])[1] || '';
+    lines.push({ label: w[0], value: v, note: note, illegible: /[#?]/.test(v) });
+  });
+  return { kind: scan ? 'scan' : 'text', lowQuality: scan && /low quality/i.test(first), lines: lines, illegible: lines.some(function (l) { return l.illegible; }) };
+}
+
+/* the check (code): every value the AI copied from the source must be found in the email or PDF text, the load ID must
+   be a valid sheet ID, and money or sending always goes to a person. It can only turn a write into "ask a person". */
+function runCheck(sc) {
+  var ai = sc.ai, f = ai.fields || {}, pdf = sc.attachment_text || '', mail = sc.subject + '\n' + sc.body, all = mail + '\n' + pdf;
+  var where = function (v) { return inText(pdf, v) ? 'PDF' : inText(mail, v) ? 'email' : null; };
+  var lines = [], verdict = 'pass';
+  var add = function (label, value, show, state, note, w) { lines.push({ label: label, value: value, show: show || value, state: state, note: note || '', where: w || null }); if (state === 'miss' && verdict === 'pass') verdict = 'miss'; };
+  var copied = function (label, value, show) { var w = where(value); add(label, value, show, w ? 'found' : 'miss', w ? '' : 'not in the email or PDF', w); };
+  if (ai.action === 'create') {
+    var lane = String(f.lane || '').split('-');
+    var okId = /^NL-\d{4}$/.test(f.load_id || '') && SHEET_IDS.indexOf(f.load_id) < 0;
+    copied('Load ID', f.load_id);
+    if (!okId) add('Load ID', f.load_id, f.load_id, 'miss', 'not a valid new ID');
+    copied('Shipper', f.shipper); copied('From', lane[0]); copied('To', lane[1]); copied('Pickup', f.appt_local, apFmt(f.appt_local));
+    if (f.status) add('Status', f.status, f.status, 'derived', 'set by the decision');
+  } else if (ai.action === 'patch') {
+    var row = null; SHEET.forEach(function (r) { if (r.id === ai.row_id) row = r; });
+    var load = row ? row.load : '';
+    var w = where(load);
+    add('Load ID', load, load, w && row ? 'found' : 'miss', w && row ? 'on the sheet' : 'not found', w);
+    Object.keys(f).forEach(function (k) { if (k !== 'load_id') add(k === 'appt_local' ? 'Appt' : k.charAt(0).toUpperCase() + k.slice(1), f[k], k === 'appt_local' ? apFmt(f[k]) : f[k], 'derived', 'set by the decision'); });
+  } else if (ai.action === 'quiet') {
+    verdict = 'none';
+  } else {
+    var ids = []; (all.match(/NL-[0-9A-Za-z#?]+/g) || []).forEach(function (x) { if (ids.indexOf(x) < 0) ids.push(x); });
+    ids.forEach(function (id) {
+      var ok = /^NL-\d{4}$/.test(id) && SHEET_IDS.indexOf(id) >= 0;
+      // a letter O where a zero belongs: say so, but never guess the row (the code only refuses, it does not repair)
+      var near = !ok && /O/.test(id) && SHEET_IDS.indexOf(id.replace(/O/g, '0')) >= 0;
+      add('Load ID', id, id, ok ? 'found' : 'miss', ok ? 'on the sheet' : near ? 'not a sheet ID: a letter O, not a zero' : 'not a sheet ID', where(id));
+    });
+    var amt = (all.match(/\$[\d,]+(?:\.\d{2})?/) || [])[0];
+    if (ai.gate === 'G1' && amt) { add('Money', amt, amt + ' asked', 'gate', 'money stays with a person'); verdict = 'gate'; }
+    if (ai.gate === 'G2') { add('Login', '', 'a login', 'gate', 'logins stay with a person'); verdict = 'gate'; }
+  }
+  if (/^\[scanned document[^\n]*low quality/i.test(pdf)) { add('Scan', '', 'poor scan', 'miss', 'a poor scan goes to a person'); verdict = 'miss'; }
+  return { verdict: verdict, lines: lines, write: verdict === 'pass' && (ai.action === 'create' || ai.action === 'patch') };
+}
+var PR = SC.map(function (sc) { return { reader: readPdf(sc), check: runCheck(sc) }; });
+
+/* station results, in big plain words */
+function kv(k, v, cls, note) { return '<li><span class="k">' + esc(k) + '</span><span class="v' + (cls ? ' ' + cls : '') + (String(v).length <= 12 ? ' nw' : '') + '">' + hl(v) + '</span>' + (note ? '<span class="nt">' + esc(note) + '</span>' : '') + '</li>'; }
+function stationHTML(i, k) {
+  var sc = SC[i], R = PR[i], ai = sc.ai, f = ai.fields || {}, o = OUT[ACT[ai.action]];
+  switch (k) {
+    case 'gmail':
+      return '<div class="r-muted">' + esc(sc.fromName) + ' <span class="r-time">· ' + esc(sc.time) + '</span></div><div class="r-big">' + hl(sc.subject) + '</div>' +
+        (sc.attach ? '<span class="r-chip">' + ic('i-envelope-attach') + esc(sc.attach) + '</span>' : '<span class="r-muted">No attachment.</span>');
+    case 'drive':
+      return sc.file ? '<div class="r-h">Saved</div><div class="r-file">' + ic('i-folder') + '<b>' + esc(sc.file) + '</b></div><div class="r-muted">One folder: Loads.</div>' : '<div class="r-none">Nothing to save.</div>';
+    case 'reader': {
+      var rd = R.reader;
+      if (rd.kind === 'none') return '<div class="r-big">No PDF.</div><div class="r-muted">It uses the email text.</div>';
+      if (rd.kind === 'image') return '<div class="r-big">' + (sc.attachKind === 'POD' ? 'Proof of delivery: no text needed.' : 'No text to read.') + '</div><div class="r-muted">It uses the email text.</div>';
+      var h = rd.kind === 'scan' ? '<div class="r-flag" data-flag="scan">' + ic('i-doc-scan') + '<span>Scan, low quality</span></div>' : '<div class="r-h">Text from the PDF</div>';
+      var rl = rd.kind === 'scan' ? rd.lines.filter(function (l) { return l.illegible; }) : rd.lines;
+      h += '<ul class="r-kv">' + rl.map(function (l) { return kv(l.label, l.label === 'Pickup' ? apFmt(l.value) : l.value, l.illegible ? 'bad' : '', l.illegible ? (l.note.split('/')[0].trim() || 'not readable') : ''); }).join('') + '</ul>';
+      return h;
+    }
+    case 'claude': {
+      var h2 = '<span class="r-out ' + o.cls + '" data-out="' + o.cls + '">' + ic(o.icon) + o.label + '</span>';
+      if (ai.action === 'create') h2 += '<ul class="r-kv">' + kv('Load', f.load_id) + kv('Shipper', f.shipper) + kv('Lane', f.lane) + kv('Status', f.status) + kv('Pickup', apFmt(f.appt_local)) + '</ul>';
+      else if (ai.action === 'patch') h2 += '<ul class="r-kv">' + kv('Load', sc.rowBefore.load) + Object.keys(f).map(function (key) { return kv(key === 'appt_local' ? 'Appt' : key.charAt(0).toUpperCase() + key.slice(1), key === 'appt_local' ? apFmt(f[key]) : f[key]); }).join('') + '</ul>';
+      else if (ai.action === 'quiet') h2 += '<div class="r-muted">Fills no fields.</div>';
+      else h2 += '<div class="r-big">' + hl(sc.why) + '</div><div class="r-muted">Fills no fields.</div>';
+      return h2;
+    }
+    case 'check': {
+      var ck = R.check;
+      if (ck.verdict === 'none') return '<div class="r-none">No write, so nothing to check.</div>';
+      var ws = []; ck.lines.forEach(function (l) { if (l.state === 'found' && ws.indexOf(l.where) < 0) ws.push(l.where); });
+      var one = ws.length === 1 ? ws[0] : null;
+      var hd = ck.verdict === 'pass' ? '<div class="r-h">Found in the ' + (one || 'email or PDF') + '</div>' : ck.verdict === 'gate' ? '<div class="r-flag" data-flag="gate">' + ic('i-hand') + '<span>Code agrees</span></div>' : '<div class="r-flag" data-flag="miss">' + ic('i-hand') + '<span>Code agrees</span></div>';
+      return hd + '<ul class="r-ck">' + ck.lines.map(function (l) {
+        var icon = l.state === 'found' ? 'i-check' : l.state === 'miss' ? 'i-cross' : l.state === 'gate' ? 'i-coin' : 'i-spark';
+        var note = l.note || (l.state === 'found' && !one ? 'in the ' + l.where : '');
+        return '<li class="' + l.state + '" data-check="' + esc(l.label) + '">' + ic(icon) + '<span><b>' + hl(l.show) + '</b>' + (note ? '<small>' + esc(note) + '</small>' : '') + '</span></li>';
+      }).join('') + '</ul>';
+    }
+    case 'sheets':
+      if (ai.action === 'create') return '<div class="r-row" data-write="row"><div class="r-row-h">' + ic('i-row-plus') + 'New row</div><span class="v">' + esc(f.load_id) + '</span><span class="v">' + esc(f.shipper) + '</span><span class="v">' + esc(f.lane) + ' · ' + esc(f.status) + '</span><span class="v">' + esc(apFmt(f.appt_local)) + '</span></div>' +
+        '<span class="r-link">' + ic('i-link') + 'Drive link</span><span class="r-ok">' + ic('i-check') + 'Read back: OK</span>';
+      if (ai.action === 'patch') { var key = Object.keys(f)[0], lab = key === 'appt_local' ? 'Appt' : key.charAt(0).toUpperCase() + key.slice(1), old = sc.rowBefore[key === 'appt_local' ? 'appt' : key] || ''; return '<div class="r-cell" data-write="cell"><div class="r-row-h">' + ic('i-cell-pencil') + esc(sc.rowBefore.load) + ' · ' + esc(lab) + '</div><s>' + esc(old) + '</s><span class="new">' + esc(f[key]) + '</span></div>' + (sc.file ? '<span class="r-link">' + ic('i-link') + 'Drive link</span>' : '') + '<span class="r-ok">' + ic('i-check') + 'Read back: OK</span>'; }
+      return '<div class="r-none" data-write="none">No write.</div>';
+    case 'digest':
+      if (ai.action === 'create') return '<div class="r-h">Adds a line</div><div class="r-dg create">' + ic('i-row-plus') + '<span>' + esc(f.load_id) + ' added</span></div>';
+      if (ai.action === 'patch') return '<div class="r-h">Adds a line</div><div class="r-dg patch">' + ic('i-cell-pencil') + '<span>' + esc(sc.rowBefore.load) + ' now ' + esc(f[Object.keys(f)[0]]) + '</span></div>';
+      return '<div class="r-h">Adds a line</div><div class="r-dg quiet">' + ic('i-moon-small') + '<span>Counted as nothing to do.</span></div>';
+  }
+  return '';
+}
+
+/* ---------- pipeline state + render ---------- */
+var elRoute = $('#route'), elTrackOn = $('#trackOn');
+(function buildStations() {
+  var h = '';
+  STATIONS.forEach(function (s, i) {
+    h += '<section class="st" data-st="' + s.k + '" aria-label="' + (i + 1) + '. ' + esc(s.name) + '"><span class="st-stopmark">' + ic('i-stop') + '</span>' +
+      '<div class="st-h"><span class="st-badge">' + ic(s.icon) + '</span><span class="st-name">' + esc(s.name) + '</span><span class="st-tag ' + (s.tagCls || '') + '">' + esc(s.tag) + '</span></div>' +
+      '<p class="st-would">' + esc(s.would) + '</p><div class="st-body" id="stb-' + s.k + '"></div></section>';
+  });
+  elRoute.insertAdjacentHTML('beforeend', h + '<div class="ptoken" id="ptoken" aria-hidden="true"></div>');
+})();
+var stEls = $$('#route .st'), stBodies = STATIONS.map(function (s) { return $('#stb-' + s.k); });
+var PS = { i: -1, reached: -1, moving: -1, ended: false, tray: [], fresh: -1 };
+var pHtml = {};
+function pSet(key, el, h) { if (pHtml[key] === h) return false; pHtml[key] = h; el.innerHTML = h; return true; }
+function stopsBefore(i) { var r = []; for (var j = 0; j < i; j++) if (!SC[j].works) r.push(j); return r; }
+
+function renderPipe(opt) {
+  opt = opt || {};
+  var P = PS, sc = P.i >= 0 ? SC[P.i] : null, last = sc ? stopIdx(sc) : -1, end = sc ? endIdx(sc) : -1;
+  // title
+  var t = '';
+  if (sc) t = '<span class="p-num ' + (sc.works ? 'works' : 'stops') + '">' + sc.n + '</span><span class="p-kind ' + (sc.works ? 'works' : 'stops') + '">' + ic(sc.works ? 'i-check' : 'i-hand') + (sc.works ? 'Works' : 'Stops') + '</span><span class="p-name">' + esc(sc.short) + '</span><span class="p-cap">' + esc(sc.caption) + '</span>';
+  else t = '<span class="p-num">' + ic('i-envelope') + '</span><span class="p-name">Six synthetic emails, one fixed route</span><span class="p-cap">Three work. Three stop and ask a person.</span>';
+  pSet('title', $('#pTitle'), t);
+  // stations
+  elRoute.classList.toggle('stops', !!sc && !sc.works);
+  STATIONS.forEach(function (s, k) {
+    var done = sc && k <= P.reached, ghost = sc && P.ended && k > end, el = stEls[k];
+    el.classList.toggle('done', !!done);
+    el.classList.toggle('on', !!sc && !P.ended && (P.moving >= 0 ? k === P.moving : k === P.reached));
+    el.classList.toggle('ghost', !!ghost);
+    el.classList.toggle('stop', !!sc && P.ended && !sc.works && k === last);
+    el.classList.toggle('also', !!sc && P.ended && !sc.works && k > last && k <= end);
+    var h = done ? stationHTML(P.i, s.k) : ghost ? '<div class="r-none">Not reached.</div>' : '';
+    if (pSet('st' + k, stBodies[k], h) && opt.animate && done && h) A(stBodies[k], [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], 380);
+  });
+  if (opt.animate && P.ended && sc && !sc.works) A($('.st-stopmark', stEls[last]), [{ opacity: 0, transform: 'scale(.4)' }, { opacity: 1, transform: 'scale(1.15)', offset: .7 }, { opacity: 1, transform: 'scale(1)' }], 420);
+  var reach = sc ? Math.max(0, P.reached) : 0;
+  elTrackOn.classList.toggle('stops', !!sc && !sc.works);
+  elTrackOn.style.transition = opt.animate && !RM.matches ? 'width ' + Math.round((opt.ms || 500)) + 'ms cubic-bezier(.6,0,.2,1)' : 'none';
+  elTrackOn.style.width = sc && P.reached >= 0 ? (100 * reach / (STATIONS.length - 1)) + '%' : '0';
+  // banner
+  var b = '', bc = '';
+  if (!sc) { bc = ''; b = ic('i-spark') + '<span>Pick a scenario, or press Play all.<small>Each email takes the same seven steps.</small></span>'; }
+  else if (!P.ended) { bc = ''; b = ic('i-envelope') + '<span>' + esc(sc.caption) + '</span>'; }
+  else if (sc.works) { bc = 'works'; b = ic('i-check') + '<span>' + (sc.ai.action === 'quiet' ? 'Right call: nothing to do. No write.' : 'Right call: the sheet is right by morning.') + '<small>' + esc(sc.caption) + '</small></span>'; }
+  else { bc = 'stops'; b = ic('i-hand') + '<span>' + hl(sc.ask.text) + '<small>It waits in the Waiting for you list. A person decides.</small></span>'; }
+  var ban = $('#pBanner'); ban.className = 'p-banner' + (bc ? ' ' + bc : '');
+  if (pSet('banner', ban, b) && opt.animate && !opt.fly) A(ban, [{ opacity: 0 }, { opacity: 1 }], 300);
+  // waiting for you
+  var w = '<div class="p-wait-h">' + ic('i-person-pause') + '<span>Waiting for you</span><span class="count">' + P.tray.length + '</span></div><ul>';
+  if (!P.tray.length) w += '<li class="none">Nothing yet.</li>';
+  P.tray.forEach(function (j) { w += '<li class="' + (j === P.fresh ? 'new' : '') + '" data-wait="' + SC[j].id + '">' + ic(SC[j].ask.icon) + '<span>' + hl(SC[j].ask.tray) + '</span></li>'; });
+  w += '</ul>';
+  var wait = $('#pWait'); wait.classList.toggle('on', P.fresh >= 0 && P.fresh === P.i && P.ended);
+  pSet('wait', wait, w);
+  // chips
+  var cw = '<span class="p-grp-h">Works</span>', cs = '<span class="p-grp-h">Stops</span>';
+  SC.forEach(function (x, j) {
+    var chip = '<button type="button" class="p-chip ' + (x.works ? 'works' : 'stops') + (j === P.i ? ' cur' : '') + '" data-sc="' + j + '"' + (j === P.i ? ' aria-current="true"' : '') + '>' + ic(x.works ? 'i-check' : 'i-hand') + '<span class="n">' + x.n + '</span><span>' + esc(x.short) + '</span></button>';
+    if (x.works) cw += chip; else cs += chip;
+  });
+  var had = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute('data-sc');
+  pSet('cw', $('#pWorks'), cw); pSet('cs', $('#pStops'), cs);
+  if (had !== null && had !== undefined) { var fc = $('[data-sc="' + had + '"]'); if (fc && document.activeElement !== fc) fc.focus(); }
+  var pb = $('#pPlay'), pt = prun ? 'Stop' : 'Play all'; if (pb.textContent !== pt) pb.textContent = pt;
+}
+
+/* ---------- token + fly ---------- */
+var ptok = null;
+function tokenX(k) { var el = stEls[k], tk = $('#ptoken'); return el.offsetLeft + el.offsetWidth / 2 - tk.offsetWidth / 2; }
+function moveToken(sc, from, to, ms) {
+  var tk = $('#ptoken'); if (!tk) return;
+  if (!ANIM || RM.matches || ms <= 0 || getComputedStyle(tk).display === 'none') { tk.style.opacity = 0; return; }
+  if (pHtml.tok !== sc.id) { tk.innerHTML = ic(sc.attach ? 'i-envelope-attach' : 'i-envelope') + '<span>' + esc(sc.short) + '</span>'; pHtml.tok = sc.id; }
+  tk.classList.toggle('stops', !sc.works);
+  var x0 = from < 0 ? tokenX(0) - 80 : tokenX(from), x1 = tokenX(to);
+  if (ptok) try { ptok.cancel(); } catch (e) { }
+  ptok = tk.animate([{ transform: 'translateX(' + x0 + 'px)', opacity: from < 0 ? 0 : 1 }, { transform: 'translateX(' + x1 + 'px)', opacity: 1 }], { duration: ms, easing: 'cubic-bezier(.6,0,.2,1)', fill: 'forwards' });
+}
+function hideToken(ms) { var tk = $('#ptoken'); if (!tk) return; if (ptok) { try { ptok.cancel(); } catch (e) { } ptok = null; } if (ms > 0 && ANIM && !RM.matches) { var x = tk.style.transform; } tk.style.opacity = 0; }
+function rectIn(el, host) { var r = el.getBoundingClientRect(), h = host.getBoundingClientRect(); return { x: (r.left - h.left) / scaleK, y: (r.top - h.top) / scaleK, w: r.width / scaleK, h: r.height / scaleK }; }
+function flyAsk(i, ms) {
+  if (!ANIM || RM.matches || ms <= 0) return;
+  var sc = SC[i], host = $('#pipe'), from = stEls[stopIdx(sc)], to = $('#pWait');
+  var a = rectIn(from, host), b = rectIn(to, host);
+  var el = document.createElement('div'); el.className = 'p-fly'; el.innerHTML = ic('i-person-pause') + '<span>Asks a person</span>';
+  host.appendChild(el);
+  var w = el.offsetWidth, h = el.offsetHeight;
+  var x0 = a.x + a.w / 2 - w / 2, y0 = a.y + a.h * .45, x1 = b.x + 40, y1 = b.y + b.h / 2 - h / 2;
+  var an = el.animate([{ transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(.7)', opacity: 0 }, { transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1)', opacity: 1, offset: .25 }, { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(.9)', opacity: 1, offset: .85 }, { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(.9)', opacity: 0 }], { duration: ms, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
+  an.onfinish = function () { if (el.parentNode) el.parentNode.removeChild(el); };
+  flies.push(el);
+}
+var flies = [];
+function killFlies() { flies.forEach(function (el) { if (el.parentNode) el.parentNode.removeChild(el); }); flies = []; }
+
+/* ---------- beats, play, settle ---------- */
+function scenarioBeats(i) {
+  var sc = SC[i], last = endIdx(sc), b = [{ type: 'start', i: i, dur: .6 }];
+  for (var k = 0; k <= last; k++) { b.push({ type: 'move', i: i, k: k, dur: k === 0 ? .5 : .55 }); b.push({ type: 'show', i: i, k: k, dur: HOLD[k] }); }
+  b.push(sc.works ? { type: 'end', i: i, dur: 1.5 } : { type: 'ask', i: i, dur: 2.4 });
+  return b;
+}
+function applyBeat(bt) {
+  var P = PS;
+  if (bt.type === 'start') { P.i = bt.i; P.reached = -1; P.moving = -1; P.ended = false; P.fresh = -1; }
+  else if (bt.type === 'move') { P.moving = bt.k; }
+  else if (bt.type === 'show') { P.reached = bt.k; P.moving = -1; }
+  else if (bt.type === 'end') { P.ended = true; }
+  else if (bt.type === 'ask') { P.ended = true; if (P.tray.indexOf(bt.i) < 0) P.tray.push(bt.i); P.fresh = bt.i; }
+}
+var prun = null, pDone = false, pPlayed = [];
+function pStop() { if (prun) { clearTimeout(prun.timer); var r = prun.resolve; prun = null; if (r) r(pState()); } hideToken(0); killFlies(); }
+function pState() { return { view: 'pipe', done: pDone, playing: !!prun, current: PS.i >= 0 ? SC[PS.i].id : null, played: pPlayed.slice(), waiting: PS.tray.map(function (j) { return SC[j].id; }) }; }
+function pRun(list, speed, trayStart) {
+  pStop(); root.classList.remove('no-anim');
+  var beats = []; list.forEach(function (i) { scenarioBeats(i).forEach(function (b) { beats.push(b); }); });
+  PS = { i: -1, reached: -1, moving: -1, ended: false, tray: trayStart.slice(), fresh: -1 };
+  pDone = false; pPlayed = [];
+  return new Promise(function (resolve) {
+    prun = { beats: beats, n: 0, speed: speed, deadline: performance.now(), timer: 0, resolve: resolve };
+    pStep();
+  });
+}
+function pStep() {
+  var r = prun, bt = r.beats[r.n], ms = bt.dur / r.speed * 1000, sc = SC[bt.i];
+  var prevReached = PS.reached;
+  applyBeat(bt);
+  ANIM = true; KSPEED = r.speed;
+  renderPipe({ animate: true, ms: ms * .9, fly: bt.type === 'ask' });
+  if (bt.type === 'move') moveToken(sc, bt.k === 0 ? -1 : bt.k - 1, bt.k, ms);
+  if (bt.type === 'end' || bt.type === 'ask') { hideToken(0); if (pPlayed.indexOf(sc.id) < 0) pPlayed.push(sc.id); }
+  if (bt.type === 'ask') flyAsk(bt.i, ms * .75);
+  if (bt.type === 'start') hideToken(0);
+  if (bt.type === 'show' && MOBILE.matches && !PRESENT) { try { stEls[bt.k].scrollIntoView({ block: 'nearest', behavior: RM.matches ? 'auto' : 'smooth' }); } catch (e) { } }
+  r.deadline += ms;
+  r.timer = setTimeout(function () {
+    if (prun !== r) return;
+    if (r.n >= r.beats.length - 1) { prun = null; pDone = true; renderPipe({ animate: false }); r.resolve(pState()); return; }
+    r.n++; pStep();
+  }, Math.max(0, r.deadline - performance.now()));
+}
+function settle(i, trayList) {
+  var sc = SC[i];
+  PS = { i: i, reached: endIdx(sc), moving: -1, ended: true, tray: trayList, fresh: sc.works ? -1 : i };
+  ANIM = false; renderPipe({ animate: false });
+}
+function showScenario(i) {
+  if (typeof i === 'string') { var m = /^s?(\d)$/.exec(i); i = m ? +m[1] - 1 : -1; }
+  if (!SC[i]) return Promise.reject(new Error('no scenario ' + i));
+  setView('pipe'); pStop(); root.classList.add('no-anim');
+  var tray = stopsBefore(i); if (!SC[i].works) tray.push(i);
+  settle(i, tray);
+  if (pPlayed.indexOf(SC[i].id) < 0) pPlayed.push(SC[i].id);
+  return raf2().then(function () { finishAll(); return raf2(); }).then(function () { return { index: i, id: SC[i].id, caption: SC[i].caption }; });
+}
+function playScenario(i, speed) { setView('pipe'); return pRun([i], speed > 0 ? speed : SPEED, stopsBefore(i)); }
+function playScenarios(opts) { opts = opts || {}; setView('pipe'); return pRun(SC.map(function (x, j) { return j; }), opts.speed > 0 ? opts.speed : SPEED, []); }
+function pReset() { pStop(); pDone = false; pPlayed = []; PS = { i: -1, reached: -1, moving: -1, ended: false, tray: [], fresh: -1 }; ANIM = false; renderPipe({ animate: false }); }
+function pTotal() { var t = 0; SC.forEach(function (x, j) { scenarioBeats(j).forEach(function (b) { t += b.dur; }); }); return t; }
+
+/* ---------- view switch ---------- */
+function setView(v) {
+  if (v !== 'pipe' && v !== 'night') return;
+  var changed = v !== VIEW || !root.classList.contains('view-' + v);
+  VIEW = v;
+  root.classList.toggle('view-pipe', v === 'pipe'); root.classList.toggle('view-night', v === 'night');
+  $$('#viewTabs [role=tab]').forEach(function (t) { var on = t.getAttribute('data-view') === v; t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1; });
+  if (!changed) return;
+  if (v === 'night') { pStop(); html = {}; arcGeom = null; if (cur.S) render(cur.S, { animate: false, idle: !cur.S || cur.S.beat < 1 }); fit(); }
+  else { if (run) { stopRun(); finishAll(); paused = true; updatePlayBtn(); } fit(); }
+}
+root.classList.add(VIEW === 'pipe' ? 'view-pipe' : 'view-night');
+$$('#viewTabs [role=tab]').forEach(function (t) { t.addEventListener('click', function () { setView(t.getAttribute('data-view')); }); });
+$('#viewTabs').addEventListener('keydown', function (e) {
+  if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].indexOf(e.key) < 0) return;
+  e.preventDefault(); e.stopPropagation();
+  var nv = VIEW === 'pipe' ? 'night' : 'pipe'; if (e.key === 'Home') nv = 'pipe'; if (e.key === 'End') nv = 'night';
+  setView(nv); $('#tab-' + nv).focus();
+});
+$('#pPlay').addEventListener('click', function () {
+  if (prun) { var i = PS.i; pStop(); if (i >= 0) showScenario(i).then(function () { root.classList.remove('no-anim'); }); return; }
+  playScenarios({ speed: SPEED });
+});
+function chipClick(e) { var b = e.target.closest('[data-sc]'); if (!b) return; playScenario(+b.getAttribute('data-sc'), SPEED); if (MOBILE.matches && !PRESENT) { try { $('#pTitle').scrollIntoView({ block: 'start', behavior: RM.matches ? 'auto' : 'smooth' }); } catch (err) { } } }
+$('#pWorks').addEventListener('click', chipClick); $('#pStops').addEventListener('click', chipClick);
+
 /* ---------------- boot ---------------- */
+// One hook for both views. The whole-night calls (play, pause, select, showStep) open the "Whole night" view; the
+// Scenarios calls (showScenario, playScenarios) open the Scenarios view. state() and reset() follow the open view.
 var api = {
   ready: null,
-  play: play,
-  pause: pause,
-  state: function () { return { done: doneFlag, current: cur.S ? cur.S.current : null, business: cur.biz, played: cur.S ? playedList(cur.S) : [] }; },
-  select: select,
-  reset: reset,
+  view: function () { return VIEW; },
+  setView: function (v) { setView(v); return VIEW; },
+  play: function (o) { setView('night'); return play(o); },
+  pause: function () { if (VIEW === 'pipe') { pStop(); return; } pause(); },
+  state: function () { if (VIEW === 'pipe') return pState(); return { view: 'night', done: doneFlag, current: cur.S ? cur.S.current : null, business: cur.biz, played: cur.S ? playedList(cur.S) : [] }; },
+  select: function (id) { setView('night'); return select(id); },
+  reset: function () { if (VIEW === 'pipe') return pReset(); return reset(); },
   steps: STEPS.map(function (s) { return { id: s.id, n: s.n, case: s.case, beat: s.beat, caption: s.caption }; }),
-  showStep: showStep,
-  total: function (biz) { return BIZ[biz || cur.biz].total; }
+  showStep: function (i) { setView('night'); return showStep(i); },
+  total: function (biz) { if (biz === 'pipe' || (!biz && VIEW === 'pipe')) return pTotal(); return BIZ[biz || cur.biz].total; },
+  scenarios: SC.map(function (x) { return { id: x.id, n: x.n, message_id: x.message_id, works: x.works, caption: x.caption, short: x.short, stopAt: x.stopAt }; }),
+  showScenario: showScenario,
+  playScenarios: playScenarios,
+  playScenario: function (i, o) { return playScenario(i, o && o.speed); },
+  // what the page computed for one scenario (decision from the recorded AI run, PDF reader and check run here), for tests
+  scenarioResult: function (i) { var x = SC[i]; if (!x) return null; return { id: x.id, message_id: x.message_id, works: x.works, stopAt: x.stopAt, decision: x.ai.action, outcome: OUT[ACT[x.ai.action]].label, row_id: x.ai.row_id, gate: x.ai.gate, fields: x.ai.fields, reader: PR[i].reader, check: PR[i].check }; }
 };
 window.__demo = api;
 api.ready = new Promise(function (resolve) {
@@ -1647,7 +2260,14 @@ api.ready = new Promise(function (resolve) {
     fit();
     render(stateAt(cur.biz, 0), { animate: false, idle: true });
     var cid = Q.get('case'); if (cid) select(cid);
-    requestAnimationFrame(function () { layoutFlow(); resolve(true); if (Q.get('autoplay') === '1') play({ speed: SPEED }); });
+    renderPipe({ animate: false });
+    var scq = Q.get('scenario'), sq = scq ? showScenario(scq).catch(function () { }) : Promise.resolve();
+    sq.then(function () {
+      requestAnimationFrame(function () {
+        layoutFlow(); if (scq) root.classList.remove('no-anim'); resolve(true);
+        if (Q.get('autoplay') === '1') { if (VIEW === 'pipe') playScenarios({ speed: SPEED }); else play({ speed: SPEED }); }
+      });
+    });
   };
   var fontsReady = document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 2500); })]) : Promise.resolve();
   fontsReady.then(go, go);
