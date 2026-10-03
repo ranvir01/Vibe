@@ -698,6 +698,110 @@ html.frame .p-wait-h{font-size:28px}
 html.frame .p-wait li{font-size:26px}
 html.frame .p-wait li .ic{width:30px;height:30px}
 html.frame .p-wait-h .count{font-size:26px;min-width:38px;height:38px}
+/* ---- frame mode v2 (present=1&frame=1): a visual route that the narrated slide-4 video records ----
+   Seven large station icons on a thick line, one short result chip per station, one big outcome below. The detail of the
+   normal view (senders, file names, key/value lines, check lists, tags, notes) stays in the DOM and is hidden here. */
+.st-chip{display:none}
+.p-out{display:none}
+.tw-short{display:none}
+html.frame.view-pipe .pipe{gap:12px;margin-top:14px;padding-bottom:22px}
+html.frame.view-pipe .p-title{min-height:58px}
+html.frame.view-pipe .route{flex:none;padding-top:84px;gap:var(--g);grid-template-rows:auto}
+html.frame.view-pipe .track{top:calc(84px + 54px - 6px);height:12px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--line-cool) 0 18px,transparent 18px 30px)}
+html.frame.view-pipe .track-on{border-radius:6px;background:var(--accent)}
+html.frame.view-pipe .track-on.stops{background:var(--held)}
+html.frame.view-pipe .track-on.good{background:var(--patch);transition:width .3s,background-color .5s!important}
+html.frame.view-pipe .st{background:transparent;border:0;box-shadow:none;padding:0;align-items:center;gap:12px;text-align:center}
+html.frame.view-pipe .st::before{display:none}
+html.frame.view-pipe .st-h{display:flex;flex-direction:column;align-items:center;gap:10px}
+html.frame.view-pipe .st-tag,html.frame.view-pipe .st-body > :not([data-chip]),html.frame.view-pipe .r-out small{display:none!important}
+html.frame.view-pipe .st-badge{--p-badge:108px;width:108px;height:108px;background:#fff;border:6px solid var(--line-cool);box-sizing:border-box;transition:border-color .3s,background-color .3s,transform .3s var(--ease-out),box-shadow .3s}
+html.frame.view-pipe .st-badge .ic{width:58px;height:58px;color:var(--muted);--sw:2.2}
+html.frame.view-pipe .st[data-st="claude"] .st-badge{background:#fff}
+html.frame.view-pipe .st-name{font:700 30px/1.1 var(--display);color:var(--muted);transition:color .3s}
+html.frame.view-pipe .st.done .st-badge{border-color:var(--accent);background:var(--tint)}
+html.frame.view-pipe .st.done .st-badge .ic,html.frame.view-pipe .st.done .st-name{color:var(--ink)}
+html.frame.view-pipe .st[data-st="claude"].done .st-badge{border-color:var(--ai);background:var(--ai-bg)}
+html.frame.view-pipe .st[data-st="claude"].done .st-badge .ic{color:var(--ai)}
+html.frame.view-pipe .route.good .st.done .st-badge{border-color:var(--patch);background:var(--patch-bg)}
+html.frame.view-pipe .route.good .st.done .st-badge .ic{color:var(--patch)}
+html.frame.view-pipe .route.stops .st.done .st-badge{border-color:var(--held);background:var(--held-bg)}
+html.frame.view-pipe .route.stops .st.done .st-badge .ic{color:var(--held)}
+html.frame.view-pipe .st.on{background:transparent;box-shadow:none}
+html.frame.view-pipe .st.on .st-badge{transform:scale(1.1);box-shadow:0 0 0 10px rgba(74,85,200,.14)}
+html.frame.view-pipe .st.stop{box-shadow:none;border:0}
+html.frame.view-pipe .route .st.stop .st-badge{border-color:var(--stop);background:var(--stop-bg);box-shadow:0 0 0 10px rgba(180,35,60,.14)}
+html.frame.view-pipe .route .st.stop .st-badge .ic{color:var(--stop)}
+html.frame.view-pipe .st.stop .st-name{color:var(--stop)}
+html.frame.view-pipe .st-stopmark{top:-20px;left:50%;margin-left:20px;width:62px;height:62px;z-index:3}
+html.frame.view-pipe .st-stopmark .ic{width:62px;height:62px;--sw:2.4}
+html.frame.view-pipe .st.also{box-shadow:none;border:0}
+html.frame.view-pipe .st.ghost{opacity:.38;background:transparent}
+html.frame.view-pipe .st.ghost .st-badge{border-style:dashed;background:transparent}
+html.frame.view-pipe .st-body{flex:none;min-height:48px;align-items:center;justify-content:flex-start;gap:0;overflow:visible}
+html.frame.view-pipe .st-body:empty{background:none}
+/* the one chip per station */
+html.frame.view-pipe .st-chip,html.frame.view-pipe .st .r-out{display:inline-flex;align-items:center;justify-content:center;align-self:center;max-width:100%;min-height:48px;padding:5px 14px;border-radius:999px;border:2px solid var(--line-cool);background:#fff;color:var(--ink);font:600 26px/1.15 var(--sans);text-align:center;white-space:normal;box-sizing:border-box}
+html.frame.view-pipe .st .r-out{gap:6px;padding:5px 12px}
+html.frame.view-pipe .st .r-out .ic{width:28px;height:28px}
+html.frame.view-pipe .st-chip.ok{background:var(--patch-bg);border-color:var(--patch-bd);color:var(--patch)}
+html.frame.view-pipe .st-chip.warn{background:var(--held-bg);border-color:var(--held-bd);color:var(--held)}
+html.frame.view-pipe .st-chip.create{background:var(--create-bg);border-color:var(--create-bd);color:var(--create)}
+html.frame.view-pipe .st-chip.patch{background:var(--patch-bg);border-color:var(--patch-bd);color:var(--patch)}
+html.frame.view-pipe .st-chip.muted{background:var(--surface-2);border-color:var(--line);color:var(--muted)}
+html.frame.view-pipe .st .r-out.create{background:var(--create-bg);border-color:var(--create);color:var(--create)}
+html.frame.view-pipe .st .r-out.patch{background:var(--patch-bg);border-color:var(--patch);color:var(--patch)}
+html.frame.view-pipe .st .r-out.quiet{background:var(--quiet-bg);border-color:var(--quiet);color:var(--quiet)}
+html.frame.view-pipe .st .r-out.held{background:var(--held-bg);border-color:var(--held);color:var(--held)}
+/* the document token rides above the line, with a pointer to the station below */
+html.frame.view-pipe .ptoken{top:0;width:76px;height:76px;padding:0;justify-content:center;border-radius:50%;border-width:4px;background:#fff}
+html.frame.view-pipe .ptoken span{display:none}
+html.frame.view-pipe .ptoken .ic{width:44px;height:44px;color:var(--accent-deep)}
+html.frame.view-pipe .ptoken.stops .ic{color:var(--held)}
+html.frame.view-pipe .ptoken::after{content:"";position:absolute;left:50%;bottom:-13px;margin-left:-9px;border:9px solid transparent;border-top-color:var(--accent);border-bottom:0}
+html.frame.view-pipe .ptoken.stops::after{border-top-color:var(--held)}
+/* the outcome: a small sheet (works) or the Waiting for you tray (stops), and one banner line */
+html.frame.view-pipe .p-foot{flex:1;height:auto;min-height:0;display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:28px;margin-top:8px}
+html.frame.view-pipe .p-out,html.frame.view-pipe .p-wait{grid-area:1 / 1;align-self:center;transition:opacity .35s var(--ease-out),visibility 0s}
+html.frame.view-pipe .p-out{display:flex;flex-direction:column;gap:14px;min-height:0}
+html.frame.view-pipe .p-foot.show-tray .p-out,html.frame.view-pipe .p-foot:not(.show-tray) .p-wait{opacity:0;visibility:hidden;transition:opacity .35s var(--ease-out),visibility 0s .35s}
+html.frame.view-pipe .p-banner{grid-area:1 / 2;align-self:center;flex-direction:column;align-items:flex-start;justify-content:center;gap:16px;min-height:0;padding:26px 30px;font:700 42px/1.2 var(--display);border-width:2px;transition:opacity .35s var(--ease-out)}
+html.frame.view-pipe .p-banner.idle{opacity:0}
+html.frame.view-pipe .p-banner .ic{width:60px;height:60px}
+html.frame.view-pipe .p-banner small{display:none}
+.ms-h{display:flex;align-items:center;gap:12px;font:700 30px/1.1 var(--display);color:var(--ink)}
+.ms-h .ic{width:42px;height:42px;color:var(--accent)}
+.ms-badge{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;border:2px solid var(--quiet-bd);background:var(--quiet-bg);color:var(--quiet);font:600 28px/1.1 var(--sans)}
+.ms-badge .ic{width:30px;height:30px}
+.ms{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;background:#fff;border:2px solid var(--line-cool);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.ms col.c-load{width:21%} .ms col.c-ship{width:42%} .ms col.c-stat{width:37%}
+.ms th{font:600 28px/1.1 var(--sans);color:var(--muted);text-align:left;padding:14px 22px;background:var(--surface-2);border-bottom:2px solid var(--line-cool)}
+.ms td{font:500 33px/1.15 var(--sans);color:var(--ink);padding:0 22px;height:90px;border-bottom:1px solid var(--line);white-space:nowrap;overflow:hidden;text-overflow:clip;font-variant-numeric:slashed-zero tabular-nums}
+.ms tr:last-child td{border-bottom:0}
+.ms td.ld{font-weight:700}
+.ms tr.new td{background:var(--create-bg);color:var(--create);font-weight:700}
+.ms tr.new td:first-child{box-shadow:inset 8px 0 0 var(--create)}
+.ms tr.slot td{color:var(--faint);font-weight:500}
+.ms tr.slot td:first-child{box-shadow:inset 8px 0 0 var(--line-cool)}
+.ms td.cell{background:var(--patch-bg);color:var(--patch);font-weight:700;box-shadow:inset 0 0 0 3px var(--patch)}
+.ms td.cell s{color:var(--muted);font-weight:500;text-decoration-thickness:3px;margin-right:12px}
+.ms td.pend{box-shadow:inset 0 0 0 3px var(--line-cool)}
+html.frame.view-pipe .p-wait{border:3px dashed var(--held-bd);border-radius:18px;padding:18px 22px;gap:14px;justify-content:flex-start;min-height:0;background:#fff}
+html.frame.view-pipe .p-wait.on{border-style:solid;border-color:var(--held);box-shadow:0 0 0 6px rgba(154,69,8,.12)}
+html.frame.view-pipe .p-wait-h{font:700 34px/1.1 var(--display);gap:12px}
+html.frame.view-pipe .p-wait-h .ic{width:46px;height:46px}
+html.frame.view-pipe .p-wait-h .count{font:700 28px/1 var(--sans);min-width:46px;height:46px}
+html.frame.view-pipe .p-wait ul{gap:12px}
+html.frame.view-pipe .p-wait li{font-size:30px;gap:14px;min-height:84px;padding:8px 16px;border-radius:14px;background:var(--surface-2);border:2px solid var(--line)}
+html.frame.view-pipe .p-wait li.none{background:none;border-style:dashed;color:var(--muted)}
+html.frame.view-pipe .p-wait li.new{background:var(--held-bg);border-color:var(--held)}
+html.frame.view-pipe .p-wait li .ic{width:40px;height:40px}
+html.frame.view-pipe .tw-long{display:none}
+html.frame.view-pipe .tw-short{display:flex;align-items:center;gap:14px;min-width:0;flex-wrap:wrap}
+.tw-short b{font-weight:700;color:var(--ink)}
+.tw-chip{display:inline-flex;align-items:center;padding:4px 14px;border-radius:999px;border:2px solid var(--held-bd);background:#fff;color:var(--held);font-weight:600;font-size:28px;line-height:1.15}
+html.frame.view-pipe .p-fly{display:flex;gap:12px;padding:14px 20px;border-radius:16px;font:700 28px/1.1 var(--sans);background:#fff;border:3px solid var(--held);box-shadow:var(--shadow-lift)}
+html.frame.view-pipe .p-fly .ic{width:40px;height:40px}
 
 /* smaller screens: the route becomes a column, top to bottom */
 @media (max-width:1180px){
@@ -982,7 +1086,8 @@ html.frame .p-wait-h .count{font-size:26px;min-width:38px;height:38px}
     <div class="route" id="route">
       <div class="track" aria-hidden="true"><span class="track-on" id="trackOn"></span></div>
     </div>
-    <div class="p-foot">
+    <div class="p-foot" id="pFoot">
+      <div class="p-out" id="pOut" aria-hidden="true"></div>
       <div class="p-banner" id="pBanner" aria-live="polite"></div>
       <div class="p-wait" id="pWait"></div>
     </div>
@@ -1033,7 +1138,7 @@ html.frame .p-wait-h .count{font-size:26px;min-width:38px;height:38px}
     <p><a href="under-the-hood.html" target="_blank" rel="noopener">96.7% right calls on the 30-email synthetic answer key: see the scored version<svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a></p>
   </footer>
 </div>
-<script id="mockdata" type="application/json">{"freight":{"cases":[{"id":"M002","time":"Thu 9:32 pm","clock":"9:32 pm","night":1,"fromName":"Cascade Logistics","fromEmail":"ops@cascadelogistics.example","subject":"NL-1048 appointment moved to 10:00","body":"Appointment for NL-1048 moved from 08:00 to 10:00 at Seattle DC tomorrow. Please update the Master.","attach":null,"reason":"NL-1048 Seattle DC appointment moved from 08:00 to 10:00 on 9/25.","conf":"0.91","confNote":"recorded AI run","rail":"Appointment moved","variant":"a68","row":"R02","outcome":"patch","change":{"kind":"cell","rowId":"R02","col":"appt","colLabel":"Appt","from":"9/25 08:00","to":"9/25 10:00"}},{"id":"M003","time":"Thu 9:45 pm","clock":"9:45 pm","night":1,"fromName":"Logistics Digest","fromEmail":"news@logisticsdigest.example","subject":"Your weekly freight digest","body":"Top stories in freight tech this week: autonomous yard trucks, the spot rate index update, and a webinar on detention. Read online or...","attach":null,"reason":"Weekly newsletter with no load content.","conf":"0.98","confNote":"recorded AI run","rail":"Newsletter","variant":"quiet","row":null,"outcome":"quiet"},{"id":"M004","time":"Thu 10:03 pm","clock":"10:03 pm","night":1,"fromName":"Ridgeline Warehouse Services","fromEmail":"billing@ridgelinewarehouse.example","subject":"Invoice reminder NL-1039","body":"Friendly reminder that the invoice for NL-1039 is now due. Please pay $2,450 by Friday or let us know if there is a dispute.","attach":null,"reason":"Invoice for NL-1039 due, $2,450 payment requested; money decisions go to the morning queue.","conf":"0.97","confNote":"recorded AI run","rail":"Invoice","variant":"held","row":"R06","outcome":"held","tag":{"icon":"i-coin","text":"Stays with a person: money"},"tray":{"icon":"i-coin","text":"NL-1039 · invoice $2,450 · money"},"heldRows":["R06"]},{"id":"M005","time":"Thu 10:18 pm","clock":"10:18 pm","night":1,"fromName":"Metro Retail DC","fromEmail":"receiving@metroretail.example","subject":"NL-1051 delivered - POD attached","body":"NL-1051 delivered to Metro Retail DC at 21:55. POD on file. Update status to Delivered.","attach":null,"reason":"NL-1051 delivered 21:55 with POD on file; In Transit moves to Delivered.","conf":"0.94","confNote":"recorded AI run","rail":"Delivered","variant":"a60","row":"R03","outcome":"patch","change":{"kind":"cell","rowId":"R03","col":"status","colLabel":"Status","from":"In Transit","to":"Delivered"}},{"id":"M015","time":"Fri 3:12 am","clock":"3:12 am","night":1,"fromName":"Olympic Seafood Exports","fromEmail":"bookings@olympicseafood.example","subject":"Rate Confirmation NL-1074 - SEA to PDX, Mon 9/28","body":"Attached is the signed rate confirmation for NL-1074, Seattle cold storage to Portland, Monday 9/28 pickup 07:00. Reefer at -10F, 22...","attach":"Rate confirmation attached","reason":"Signed rate confirmation for new load NL-1074 SEA-PDX, Mon 9/28 07:00 pickup; not in Master.","conf":"0.93","confNote":"recorded AI run","rail":"New load","variant":"a68","row":"R15","outcome":"create","change":{"kind":"append","rowId":"R15","cells":{"load":"NL-1074","shipper":"Olympic Seafood Exports","lane":"SEA-PDX","status":"Confirmed","appt":"9/28 07:00"}}},{"id":"M024","time":"Fri 10:47 pm","clock":"10:47 pm","night":2,"fromName":"CarrierLink Portal","fromEmail":"no-reply@carrierlinkportal.example","subject":"Action required: session expired - POD ready for NL-1058","body":"A proof of delivery document for load NL-1058 (Blue Peak Logistics) is ready to view. Your portal session has expired. Sign in and complete...","attach":null,"reason":"NL-1058 POD sits behind expired portal session and two-factor login; needs a human present.","conf":"0.95","confNote":"recorded AI run","rail":"Portal login","variant":"held","row":"R12","outcome":"held","tag":{"icon":"i-lock","text":"Stays with a person: logins"},"tray":{"icon":"i-lock","text":"NL-1058 · portal login · logins"},"heldRows":["R12"]},{"id":"M026","time":"Fri 11:33 pm","clock":"11:33 pm","night":2,"fromName":"Cascade Logistics","fromEmail":"ops@cascadelogistics.example","subject":"two things - 1069 and 1048","body":"Hey - two things. NL-1069 Seattle-Spokane is a GO, shipper signed off, pickup Wednesday, we'll send the paperwork. And NL-1048 delivered to...","attach":null,"reason":"Single message carries updates for two loads (NL-1069 go-ahead, NL-1048 delivered); cannot route to one row.","conf":"0.88","confNote":"recorded AI run","rail":"Two loads","variant":"held","row":"R14","outcome":"ask","tag":{"icon":"i-split","text":"Unclear: two loads in one email"},"tray":{"icon":"i-split","text":"NL-1069 and NL-1048 · two loads in one email · unclear"},"splitTags":["NL-1069","NL-1048"],"heldRows":["R14","R02"]}],"rows":[{"id":"R01","c":{"load":"NL-1042","shipper":"Pacific Ship Co","lane":"SEA-TAC","status":"Booked","appt":"9/26 08:00"}},{"id":"R02","c":{"load":"NL-1048","shipper":"Cascade Logistics","lane":"BLI-SEA","status":"Dispatched","appt":"9/25 08:00"}},{"id":"R03","c":{"load":"NL-1051","shipper":"Metro Retail DC","lane":"PDX-SEA","status":"In Transit","appt":""}},{"id":"R04","c":{"load":"NL-1055","shipper":"Inland Routes","lane":"GEG-BOI","status":"Quoted","appt":""}},{"id":"R05","c":{"load":"NL-1044","shipper":"Blue Peak Logistics","lane":"SEA-BOI","status":"In Transit","appt":""}},{"id":"R06","c":{"load":"NL-1039","shipper":"Harborline Partners","lane":"PDX-EUG","status":"Delivered","appt":""}},{"id":"R07","c":{"load":"NL-1033","shipper":"Harborline Partners","lane":"SEA-YKM","status":"Cancelled","appt":""}},{"id":"R08","c":{"load":"NL-1060","shipper":"Pacific Ship Co","lane":"TAC-PDX","status":"Planning","appt":""}},{"id":"R09","c":{"load":"NL-1040","shipper":"Metro Retail DC","lane":"SEA-PDX","status":"Delivered","appt":""}},{"id":"R10","c":{"load":"NL-1063","shipper":"Evergreen Produce Co","lane":"YKM-SEA","status":"Confirmed","appt":"9/25 22:00"}},{"id":"R11","c":{"load":"NL-1066","shipper":"Summit Building Supply","lane":"BOI-GEG","status":"Booked","appt":"9/28 09:00"}},{"id":"R12","c":{"load":"NL-1058","shipper":"Blue Peak Logistics","lane":"PDX-BOI","status":"Delivered","appt":""}},{"id":"R13","c":{"load":"NL-1071","shipper":"Rainier Paper Mills","lane":"TAC-PDX","status":"Confirmed","appt":"9/26 03:00"}},{"id":"R14","c":{"load":"NL-1069","shipper":"Cascade Logistics","lane":"SEA-GEG","status":"Quoted","appt":""}}],"changed":[{"icon":"i-cell-pencil","cls":"patch","text":"NL-1048 appt 08:00 to 10:00"},{"icon":"i-cell-pencil","cls":"patch","text":"NL-1051 now Delivered"},{"icon":"i-row-plus","cls":"create","text":"NL-1074 added"}],"heldLines":[{"icon":"i-coin","text":"NL-1039 · invoice $2,450 · money"},{"icon":"i-lock","text":"NL-1058 · portal login · logins"},{"icon":"i-split","text":"NL-1069 and NL-1048 · two loads in one email"}]},"pipeline":{"scenarios":[{"id":"s1","n":1,"message_id":"M015","works":true,"short":"Rate confirmation","stopAt":null,"fromName":"Olympic Seafood Exports","fromEmail":"bookings@olympicseafood.example","time":"Fri 3:12 am","subject":"Rate Confirmation NL-1074 - SEA to PDX, Mon 9/28","body":"Attached is the signed rate confirmation for NL-1074, Seattle cold storage to Portland, Monday 9/28 pickup 07:00. Reefer at -10F, 22 pallets frozen. Please add it to your board. Thanks, Dana - Olympic Seafood bookings","attachment_text":"RATE CONFIRMATION\nOlympic Seafood Exports - Booking Desk\nLoad ID: NL-1074    Shipper Ref: OSE-20931\nOrigin: SEA - Seattle cold storage, dock 7\nDestination: PDX - Portland distribution center, door 9\nPickup Appointment: 2026-09-28 07:00 local (driver check-in 06:30)\nDelivery Window: 2026-09-28 14:00 - 16:00 local\nEquipment: 53' reefer, continuous run, set point -10F\nCommodity: frozen seafood, 22 pallets, approx 38,000 lbs\nLinehaul Rate: $1,150.00 all-in, fuel included\nPayment Terms: Net 30 on receipt of signed POD\nSpecial Instructions: temp recorder required; driver checks in at cold storage office; no partial unloads.\nAccepted by: Northline Freight dispatch (electronic acceptance)  Date: 2026-09-24","attach":"PDF attached","attachKind":"rate con","file":"Olympic Seafood Exports rate con.pdf","ai":{"action":"create","row_id":null,"gate":null,"fields":{"load_id":"NL-1074","shipper":"Olympic Seafood Exports","lane":"SEA-PDX","status":"Confirmed","appt_local":"2026-09-28 07:00"},"rationale":"Signed rate confirmation for new load NL-1074 SEA-PDX, Mon 9/28 07:00 pickup; not in Master."},"rowBefore":null,"idInMail":"NL-1074","amount":"","rowLoad":"","caption":"A rate confirmation PDF becomes a new row."},{"id":"s2","n":2,"message_id":"M005","works":true,"short":"Delivery email","stopAt":null,"fromName":"Metro Retail DC","fromEmail":"receiving@metroretail.example","time":"Thu 10:18 pm","subject":"NL-1051 delivered - POD attached","body":"NL-1051 delivered to Metro Retail DC at 21:55. POD on file. Update status to Delivered.","attachment_text":"","attach":"Delivery proof attached","attachKind":"POD","file":"Metro Retail DC POD.pdf","ai":{"action":"patch","row_id":"R03","gate":null,"fields":{"status":"Delivered"},"rationale":"NL-1051 delivered 21:55 with POD on file; In Transit moves to Delivered."},"rowBefore":{"id":"R03","load":"NL-1051","status":"In Transit","appt":"","shipper":"Metro Retail DC","lane":"PDX-SEA"},"idInMail":"NL-1051","amount":"","rowLoad":"NL-1051","caption":"A delivery email. Fix a cell: the status becomes Delivered."},{"id":"s3","n":3,"message_id":"M003","works":true,"short":"Newsletter","stopAt":null,"fromName":"Logistics Digest","fromEmail":"news@logisticsdigest.example","time":"Thu 9:45 pm","subject":"Your weekly freight digest","body":"Top stories in freight tech this week: autonomous yard trucks, the spot rate index update, and a webinar on detention. Read online or unsubscribe below.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"quiet","row_id":null,"gate":null,"fields":null,"rationale":"Weekly newsletter with no load content."},"rowBefore":null,"idInMail":"","amount":"","rowLoad":"","caption":"A newsletter. Nothing to do, so no write."},{"id":"s4","n":4,"message_id":"M028","works":false,"short":"Smudged scan","stopAt":"claude","fromName":"Columbia Grain Co-op","fromEmail":"logistics@columbiagrain.example","time":"Sat 1:10 am","subject":"Rate confirmation - scanned copy","body":"Scanned rate con attached for the Pasco to Tacoma grain load picking up Wednesday 9/30. Our scanner is acting up tonight, sorry for the quality of the copy.","attachment_text":"[scanned document - OCR extraction, low quality]\nCOLUMBIA GRAIN CO-OP   RATE CONF1RMATION\nLoad ID: NL-1#?# (digits smudged / illegible)\nCo-op Ref: CGC-2209-A\nOrigin: PSC - co-op elevator, Pasco\nDestination: TAC - export terminal, Tacoma\nPickup Appt: 2026-09-30 10:00 local\nEquipment: hopper bottom, 2 compartments, food-grade washout required\nCommodity: soft white wheat, approx 50,000 lbs\nRate: $1,3?0.00 (partially illegible)\nTerms: Net 30\nSignature: [illegible]   Date: [illegible]\n[end of extraction - 3 lines could not be recognized]","attach":"Scanned PDF attached","attachKind":"rate con","file":"Columbia Grain Co-op rate con scan.pdf","ai":{"action":"escalate","row_id":null,"gate":null,"fields":null,"rationale":"Scanned rate con with illegible load id and partial rate; cannot create a row without a readable id."},"rowBefore":null,"idInMail":"","amount":"","rowLoad":"","caption":"A smudged scan. The load ID is not readable: ask a person.","why":"Load ID not readable.","ask":{"text":"Asks a person: the scan is poor and the load ID is not readable.","tray":"Columbia Grain Co-op · smudged scan · load ID not readable","icon":"i-doc-scan"}},{"id":"s5","n":5,"message_id":"M023","works":false,"short":"Letter O in the ID","stopAt":"claude","fromName":"Northline Night Dispatch","fromEmail":"dispatch@northline.example","time":"Fri 10:18 pm","subject":"NL-1O71 Rainier Paper - driver assigned","body":"Driver assigned on NL-1O71 for Rainier Paper Mills, Tacoma to Portland. Unit 418, loading Tacoma 23:30 tonight, running straight thru for the 03:00 Portland drop. Will ping you when he is loaded.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"escalate","row_id":"R13","gate":null,"fields":null,"rationale":"Load id written NL-1O71 (letter O) does not match exactly; details fit NL-1071 but typo requires human confirmation."},"rowBefore":null,"idInMail":"NL-1O71","amount":"","rowLoad":"NL-1071","caption":"The load ID has a letter O, not a zero: ask a person.","why":"NL-1O71 is close to NL-1071, but not exact.","ask":{"text":"Asks a person: NL-1O71 has a letter O, not a zero.","tray":"NL-1O71 · letter O, not a zero · unclear","icon":"i-cross"}},{"id":"s6","n":6,"message_id":"M004","works":false,"short":"Invoice","stopAt":"claude","fromName":"Ridgeline Warehouse Services","fromEmail":"billing@ridgelinewarehouse.example","time":"Thu 10:03 pm","subject":"Invoice reminder NL-1039","body":"Friendly reminder that the invoice for NL-1039 is now due. Please pay $2,450 by Friday or let us know if there is a dispute.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"escalate","row_id":"R06","gate":"G1","fields":null,"rationale":"Invoice for NL-1039 due, $2,450 payment requested; money decisions go to the morning queue."},"rowBefore":null,"idInMail":"NL-1039","amount":"$2,450","rowLoad":"NL-1039","caption":"An invoice for $2,450. Money stays with a person.","why":"Money: a $2,450 invoice.","ask":{"text":"Asks a person: a $2,450 invoice. Money stays with a person.","tray":"NL-1039 · invoice $2,450 · money","icon":"i-coin"}}],"sheet":[{"id":"R01","load":"NL-1042","status":"Booked"},{"id":"R02","load":"NL-1048","status":"Dispatched"},{"id":"R03","load":"NL-1051","status":"In Transit"},{"id":"R04","load":"NL-1055","status":"Quoted"},{"id":"R05","load":"NL-1044","status":"In Transit"},{"id":"R06","load":"NL-1039","status":"Delivered"},{"id":"R07","load":"NL-1033","status":"Cancelled"},{"id":"R08","load":"NL-1060","status":"Planning"},{"id":"R09","load":"NL-1040","status":"Delivered"},{"id":"R10","load":"NL-1063","status":"Confirmed"},{"id":"R11","load":"NL-1066","status":"Booked"},{"id":"R12","load":"NL-1058","status":"Delivered"},{"id":"R13","load":"NL-1071","status":"Confirmed"},{"id":"R14","load":"NL-1069","status":"Quoted"}]}}</script>
+<script id="mockdata" type="application/json">{"freight":{"cases":[{"id":"M002","time":"Thu 9:32 pm","clock":"9:32 pm","night":1,"fromName":"Cascade Logistics","fromEmail":"ops@cascadelogistics.example","subject":"NL-1048 appointment moved to 10:00","body":"Appointment for NL-1048 moved from 08:00 to 10:00 at Seattle DC tomorrow. Please update the Master.","attach":null,"reason":"NL-1048 Seattle DC appointment moved from 08:00 to 10:00 on 9/25.","conf":"0.91","confNote":"recorded AI run","rail":"Appointment moved","variant":"a68","row":"R02","outcome":"patch","change":{"kind":"cell","rowId":"R02","col":"appt","colLabel":"Appt","from":"9/25 08:00","to":"9/25 10:00"}},{"id":"M003","time":"Thu 9:45 pm","clock":"9:45 pm","night":1,"fromName":"Logistics Digest","fromEmail":"news@logisticsdigest.example","subject":"Your weekly freight digest","body":"Top stories in freight tech this week: autonomous yard trucks, the spot rate index update, and a webinar on detention. Read online or...","attach":null,"reason":"Weekly newsletter with no load content.","conf":"0.98","confNote":"recorded AI run","rail":"Newsletter","variant":"quiet","row":null,"outcome":"quiet"},{"id":"M004","time":"Thu 10:03 pm","clock":"10:03 pm","night":1,"fromName":"Ridgeline Warehouse Services","fromEmail":"billing@ridgelinewarehouse.example","subject":"Invoice reminder NL-1039","body":"Friendly reminder that the invoice for NL-1039 is now due. Please pay $2,450 by Friday or let us know if there is a dispute.","attach":null,"reason":"Invoice for NL-1039 due, $2,450 payment requested; money decisions go to the morning queue.","conf":"0.97","confNote":"recorded AI run","rail":"Invoice","variant":"held","row":"R06","outcome":"held","tag":{"icon":"i-coin","text":"Stays with a person: money"},"tray":{"icon":"i-coin","text":"NL-1039 · invoice $2,450 · money"},"heldRows":["R06"]},{"id":"M005","time":"Thu 10:18 pm","clock":"10:18 pm","night":1,"fromName":"Metro Retail DC","fromEmail":"receiving@metroretail.example","subject":"NL-1051 delivered - POD attached","body":"NL-1051 delivered to Metro Retail DC at 21:55. POD on file. Update status to Delivered.","attach":null,"reason":"NL-1051 delivered 21:55 with POD on file; In Transit moves to Delivered.","conf":"0.94","confNote":"recorded AI run","rail":"Delivered","variant":"a60","row":"R03","outcome":"patch","change":{"kind":"cell","rowId":"R03","col":"status","colLabel":"Status","from":"In Transit","to":"Delivered"}},{"id":"M015","time":"Fri 3:12 am","clock":"3:12 am","night":1,"fromName":"Olympic Seafood Exports","fromEmail":"bookings@olympicseafood.example","subject":"Rate Confirmation NL-1074 - SEA to PDX, Mon 9/28","body":"Attached is the signed rate confirmation for NL-1074, Seattle cold storage to Portland, Monday 9/28 pickup 07:00. Reefer at -10F, 22...","attach":"Rate confirmation attached","reason":"Signed rate confirmation for new load NL-1074 SEA-PDX, Mon 9/28 07:00 pickup; not in Master.","conf":"0.93","confNote":"recorded AI run","rail":"New load","variant":"a68","row":"R15","outcome":"create","change":{"kind":"append","rowId":"R15","cells":{"load":"NL-1074","shipper":"Olympic Seafood Exports","lane":"SEA-PDX","status":"Confirmed","appt":"9/28 07:00"}}},{"id":"M024","time":"Fri 10:47 pm","clock":"10:47 pm","night":2,"fromName":"CarrierLink Portal","fromEmail":"no-reply@carrierlinkportal.example","subject":"Action required: session expired - POD ready for NL-1058","body":"A proof of delivery document for load NL-1058 (Blue Peak Logistics) is ready to view. Your portal session has expired. Sign in and complete...","attach":null,"reason":"NL-1058 POD sits behind expired portal session and two-factor login; needs a human present.","conf":"0.95","confNote":"recorded AI run","rail":"Portal login","variant":"held","row":"R12","outcome":"held","tag":{"icon":"i-lock","text":"Stays with a person: logins"},"tray":{"icon":"i-lock","text":"NL-1058 · portal login · logins"},"heldRows":["R12"]},{"id":"M026","time":"Fri 11:33 pm","clock":"11:33 pm","night":2,"fromName":"Cascade Logistics","fromEmail":"ops@cascadelogistics.example","subject":"two things - 1069 and 1048","body":"Hey - two things. NL-1069 Seattle-Spokane is a GO, shipper signed off, pickup Wednesday, we'll send the paperwork. And NL-1048 delivered to...","attach":null,"reason":"Single message carries updates for two loads (NL-1069 go-ahead, NL-1048 delivered); cannot route to one row.","conf":"0.88","confNote":"recorded AI run","rail":"Two loads","variant":"held","row":"R14","outcome":"ask","tag":{"icon":"i-split","text":"Unclear: two loads in one email"},"tray":{"icon":"i-split","text":"NL-1069 and NL-1048 · two loads in one email · unclear"},"splitTags":["NL-1069","NL-1048"],"heldRows":["R14","R02"]}],"rows":[{"id":"R01","c":{"load":"NL-1042","shipper":"Pacific Ship Co","lane":"SEA-TAC","status":"Booked","appt":"9/26 08:00"}},{"id":"R02","c":{"load":"NL-1048","shipper":"Cascade Logistics","lane":"BLI-SEA","status":"Dispatched","appt":"9/25 08:00"}},{"id":"R03","c":{"load":"NL-1051","shipper":"Metro Retail DC","lane":"PDX-SEA","status":"In Transit","appt":""}},{"id":"R04","c":{"load":"NL-1055","shipper":"Inland Routes","lane":"GEG-BOI","status":"Quoted","appt":""}},{"id":"R05","c":{"load":"NL-1044","shipper":"Blue Peak Logistics","lane":"SEA-BOI","status":"In Transit","appt":""}},{"id":"R06","c":{"load":"NL-1039","shipper":"Harborline Partners","lane":"PDX-EUG","status":"Delivered","appt":""}},{"id":"R07","c":{"load":"NL-1033","shipper":"Harborline Partners","lane":"SEA-YKM","status":"Cancelled","appt":""}},{"id":"R08","c":{"load":"NL-1060","shipper":"Pacific Ship Co","lane":"TAC-PDX","status":"Planning","appt":""}},{"id":"R09","c":{"load":"NL-1040","shipper":"Metro Retail DC","lane":"SEA-PDX","status":"Delivered","appt":""}},{"id":"R10","c":{"load":"NL-1063","shipper":"Evergreen Produce Co","lane":"YKM-SEA","status":"Confirmed","appt":"9/25 22:00"}},{"id":"R11","c":{"load":"NL-1066","shipper":"Summit Building Supply","lane":"BOI-GEG","status":"Booked","appt":"9/28 09:00"}},{"id":"R12","c":{"load":"NL-1058","shipper":"Blue Peak Logistics","lane":"PDX-BOI","status":"Delivered","appt":""}},{"id":"R13","c":{"load":"NL-1071","shipper":"Rainier Paper Mills","lane":"TAC-PDX","status":"Confirmed","appt":"9/26 03:00"}},{"id":"R14","c":{"load":"NL-1069","shipper":"Cascade Logistics","lane":"SEA-GEG","status":"Quoted","appt":""}}],"changed":[{"icon":"i-cell-pencil","cls":"patch","text":"NL-1048 appt 08:00 to 10:00"},{"icon":"i-cell-pencil","cls":"patch","text":"NL-1051 now Delivered"},{"icon":"i-row-plus","cls":"create","text":"NL-1074 added"}],"heldLines":[{"icon":"i-coin","text":"NL-1039 · invoice $2,450 · money"},{"icon":"i-lock","text":"NL-1058 · portal login · logins"},{"icon":"i-split","text":"NL-1069 and NL-1048 · two loads in one email"}]},"pipeline":{"scenarios":[{"id":"s1","n":1,"message_id":"M015","works":true,"short":"Rate confirmation","stopAt":null,"fromName":"Olympic Seafood Exports","fromEmail":"bookings@olympicseafood.example","time":"Fri 3:12 am","subject":"Rate Confirmation NL-1074 - SEA to PDX, Mon 9/28","body":"Attached is the signed rate confirmation for NL-1074, Seattle cold storage to Portland, Monday 9/28 pickup 07:00. Reefer at -10F, 22 pallets frozen. Please add it to your board. Thanks, Dana - Olympic Seafood bookings","attachment_text":"RATE CONFIRMATION\nOlympic Seafood Exports - Booking Desk\nLoad ID: NL-1074    Shipper Ref: OSE-20931\nOrigin: SEA - Seattle cold storage, dock 7\nDestination: PDX - Portland distribution center, door 9\nPickup Appointment: 2026-09-28 07:00 local (driver check-in 06:30)\nDelivery Window: 2026-09-28 14:00 - 16:00 local\nEquipment: 53' reefer, continuous run, set point -10F\nCommodity: frozen seafood, 22 pallets, approx 38,000 lbs\nLinehaul Rate: $1,150.00 all-in, fuel included\nPayment Terms: Net 30 on receipt of signed POD\nSpecial Instructions: temp recorder required; driver checks in at cold storage office; no partial unloads.\nAccepted by: Northline Freight dispatch (electronic acceptance)  Date: 2026-09-24","attach":"PDF attached","attachKind":"rate con","file":"Olympic Seafood Exports rate con.pdf","ai":{"action":"create","row_id":null,"gate":null,"fields":{"load_id":"NL-1074","shipper":"Olympic Seafood Exports","lane":"SEA-PDX","status":"Confirmed","appt_local":"2026-09-28 07:00"},"rationale":"Signed rate confirmation for new load NL-1074 SEA-PDX, Mon 9/28 07:00 pickup; not in Master."},"rowBefore":null,"idInMail":"NL-1074","amount":"","rowLoad":"","caption":"A rate confirmation PDF becomes a new row."},{"id":"s2","n":2,"message_id":"M005","works":true,"short":"Delivery email","stopAt":null,"fromName":"Metro Retail DC","fromEmail":"receiving@metroretail.example","time":"Thu 10:18 pm","subject":"NL-1051 delivered - POD attached","body":"NL-1051 delivered to Metro Retail DC at 21:55. POD on file. Update status to Delivered.","attachment_text":"","attach":"Delivery proof attached","attachKind":"POD","file":"Metro Retail DC POD.pdf","ai":{"action":"patch","row_id":"R03","gate":null,"fields":{"status":"Delivered"},"rationale":"NL-1051 delivered 21:55 with POD on file; In Transit moves to Delivered."},"rowBefore":{"id":"R03","load":"NL-1051","status":"In Transit","appt":"","shipper":"Metro Retail DC","lane":"PDX-SEA"},"idInMail":"NL-1051","amount":"","rowLoad":"NL-1051","caption":"A delivery email. Fix a cell: the status becomes Delivered."},{"id":"s3","n":3,"message_id":"M003","works":true,"short":"Newsletter","stopAt":null,"fromName":"Logistics Digest","fromEmail":"news@logisticsdigest.example","time":"Thu 9:45 pm","subject":"Your weekly freight digest","body":"Top stories in freight tech this week: autonomous yard trucks, the spot rate index update, and a webinar on detention. Read online or unsubscribe below.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"quiet","row_id":null,"gate":null,"fields":null,"rationale":"Weekly newsletter with no load content."},"rowBefore":null,"idInMail":"","amount":"","rowLoad":"","caption":"A newsletter. Nothing to do, so no write."},{"id":"s4","n":4,"message_id":"M028","works":false,"short":"Smudged scan","stopAt":"claude","fromName":"Columbia Grain Co-op","fromEmail":"logistics@columbiagrain.example","time":"Sat 1:10 am","subject":"Rate confirmation - scanned copy","body":"Scanned rate con attached for the Pasco to Tacoma grain load picking up Wednesday 9/30. Our scanner is acting up tonight, sorry for the quality of the copy.","attachment_text":"[scanned document - OCR extraction, low quality]\nCOLUMBIA GRAIN CO-OP   RATE CONF1RMATION\nLoad ID: NL-1#?# (digits smudged / illegible)\nCo-op Ref: CGC-2209-A\nOrigin: PSC - co-op elevator, Pasco\nDestination: TAC - export terminal, Tacoma\nPickup Appt: 2026-09-30 10:00 local\nEquipment: hopper bottom, 2 compartments, food-grade washout required\nCommodity: soft white wheat, approx 50,000 lbs\nRate: $1,3?0.00 (partially illegible)\nTerms: Net 30\nSignature: [illegible]   Date: [illegible]\n[end of extraction - 3 lines could not be recognized]","attach":"Scanned PDF attached","attachKind":"rate con","file":"Columbia Grain Co-op rate con scan.pdf","ai":{"action":"escalate","row_id":null,"gate":null,"fields":null,"rationale":"Scanned rate con with illegible load id and partial rate; cannot create a row without a readable id."},"rowBefore":null,"idInMail":"","amount":"","rowLoad":"","caption":"A smudged scan. The load ID is not readable: ask a person.","why":"Load ID not readable.","ask":{"text":"Asks a person: the scan is poor and the load ID is not readable.","tray":"Columbia Grain Co-op · smudged scan · load ID not readable","icon":"i-doc-scan"}},{"id":"s5","n":5,"message_id":"M023","works":false,"short":"Letter O in the ID","stopAt":"claude","fromName":"Northline Night Dispatch","fromEmail":"dispatch@northline.example","time":"Fri 10:18 pm","subject":"NL-1O71 Rainier Paper - driver assigned","body":"Driver assigned on NL-1O71 for Rainier Paper Mills, Tacoma to Portland. Unit 418, loading Tacoma 23:30 tonight, running straight thru for the 03:00 Portland drop. Will ping you when he is loaded.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"escalate","row_id":"R13","gate":null,"fields":null,"rationale":"Load id written NL-1O71 (letter O) does not match exactly; details fit NL-1071 but typo requires human confirmation."},"rowBefore":null,"idInMail":"NL-1O71","amount":"","rowLoad":"NL-1071","caption":"The load ID has a letter O, not a zero: ask a person.","why":"NL-1O71 is close to NL-1071, but not exact.","ask":{"text":"Asks a person: NL-1O71 has a letter O, not a zero.","tray":"NL-1O71 · letter O, not a zero · unclear","icon":"i-cross"}},{"id":"s6","n":6,"message_id":"M004","works":false,"short":"Invoice","stopAt":"claude","fromName":"Ridgeline Warehouse Services","fromEmail":"billing@ridgelinewarehouse.example","time":"Thu 10:03 pm","subject":"Invoice reminder NL-1039","body":"Friendly reminder that the invoice for NL-1039 is now due. Please pay $2,450 by Friday or let us know if there is a dispute.","attachment_text":"","attach":null,"attachKind":null,"file":null,"ai":{"action":"escalate","row_id":"R06","gate":"G1","fields":null,"rationale":"Invoice for NL-1039 due, $2,450 payment requested; money decisions go to the morning queue."},"rowBefore":null,"idInMail":"NL-1039","amount":"$2,450","rowLoad":"NL-1039","caption":"An invoice for $2,450. Money stays with a person.","why":"Money: a $2,450 invoice.","ask":{"text":"Asks a person: a $2,450 invoice. Money stays with a person.","tray":"NL-1039 · invoice $2,450 · money","icon":"i-coin"}}],"sheet":[{"id":"R01","load":"NL-1042","status":"Booked","shipper":"Pacific Ship Co","lane":"SEA-TAC"},{"id":"R02","load":"NL-1048","status":"Dispatched","shipper":"Cascade Logistics","lane":"BLI-SEA"},{"id":"R03","load":"NL-1051","status":"In Transit","shipper":"Metro Retail DC","lane":"PDX-SEA"},{"id":"R04","load":"NL-1055","status":"Quoted","shipper":"Inland Routes","lane":"GEG-BOI"},{"id":"R05","load":"NL-1044","status":"In Transit","shipper":"Blue Peak Logistics","lane":"SEA-BOI"},{"id":"R06","load":"NL-1039","status":"Delivered","shipper":"Harborline Partners","lane":"PDX-EUG"},{"id":"R07","load":"NL-1033","status":"Cancelled","shipper":"Harborline Partners","lane":"SEA-YKM"},{"id":"R08","load":"NL-1060","status":"Planning","shipper":"Pacific Ship Co","lane":"TAC-PDX"},{"id":"R09","load":"NL-1040","status":"Delivered","shipper":"Metro Retail DC","lane":"SEA-PDX"},{"id":"R10","load":"NL-1063","status":"Confirmed","shipper":"Evergreen Produce Co","lane":"YKM-SEA"},{"id":"R11","load":"NL-1066","status":"Booked","shipper":"Summit Building Supply","lane":"BOI-GEG"},{"id":"R12","load":"NL-1058","status":"Delivered","shipper":"Blue Peak Logistics","lane":"PDX-BOI"},{"id":"R13","load":"NL-1071","status":"Confirmed","shipper":"Rainier Paper Mills","lane":"TAC-PDX"},{"id":"R14","load":"NL-1069","status":"Quoted","shipper":"Cascade Logistics","lane":"SEA-GEG"}]}}</script>
 <script>
 (function () {
 'use strict';
@@ -2010,7 +2115,7 @@ function stationHTML(i, k) {
       return h;
     }
     case 'claude': {
-      var h2 = '<span class="r-out ' + o.cls + '" data-out="' + o.cls + '">' + ic(o.icon) + o.label + '</span>';
+      var h2 = '<span class="r-out ' + o.cls + '" data-out="' + o.cls + '" data-chip="claude">' + ic(o.icon) + o.label + '</span>';
       if (ai.action === 'create') h2 += '<ul class="r-kv">' + kv('Load', f.load_id) + kv('Shipper', f.shipper) + kv('Lane', f.lane) + kv('Status', f.status) + kv('Pickup', apFmt(f.appt_local)) + '</ul>';
       else if (ai.action === 'patch') h2 += '<ul class="r-kv">' + kv('Load', sc.rowBefore.load) + Object.keys(f).map(function (key) { return kv(key === 'appt_local' ? 'Appt' : key.charAt(0).toUpperCase() + key.slice(1), key === 'appt_local' ? apFmt(f[key]) : f[key]); }).join('') + '</ul>';
       else if (ai.action === 'quiet') h2 += '<div class="r-muted">Fills no fields.</div>';
@@ -2042,6 +2147,71 @@ function stationHTML(i, k) {
   return '';
 }
 
+/* ---------- frame mode: one short chip per station, computed from the data and the results above ---------- */
+function chipInfo(i, k) {
+  var sc = SC[i], R = PR[i], ai = sc.ai, f = ai.fields || {}, rd = R.reader, ck = R.check;
+  switch (k) {
+    case 'gmail': return sc.attach ? { t: rd.kind === 'scan' ? 'Scan attached' : sc.attachKind === 'POD' ? 'Proof attached' : 'PDF attached' } : { t: 'Email only', c: 'muted' };
+    case 'drive': return sc.file ? { t: 'Saved' } : { t: 'Nothing to save', c: 'muted' };
+    case 'reader':
+      if (rd.kind === 'text') return { t: 'Text read' };
+      if (rd.kind === 'scan') return rd.lowQuality ? { t: 'Poor scan', c: 'warn' } : { t: 'Scan read' };
+      return rd.kind === 'image' ? { t: 'Email text used', c: 'muted' } : { t: 'No PDF', c: 'muted' };
+    case 'check': {
+      if (ck.verdict === 'none') return { t: 'Nothing to check', c: 'muted' };
+      var found = ck.lines.filter(function (l) { return l.state === 'found'; }).length, copied = ck.lines.filter(function (l) { return l.state === 'found' || l.state === 'miss'; }).length;
+      if (ck.verdict === 'pass') return { t: found + ' of ' + copied + ' found', c: 'ok' };
+      if (ck.verdict === 'gate') { var g = ck.lines.filter(function (l) { return l.state === 'gate'; })[0]; return { t: g.label === 'Money' ? 'Money: ' + g.value : g.label + ': stop', c: 'warn' }; }
+      var bad = ck.lines.filter(function (l) { return l.state === 'miss' && l.label === 'Load ID'; });
+      if (bad.some(function (l) { return /[#?]/.test(l.value); })) return { t: 'ID unreadable', c: 'warn' };
+      return bad.length ? { t: 'ID not found', c: 'warn' } : { t: 'Poor scan', c: 'warn' };
+    }
+    case 'sheets':
+      if (ck.write && ai.action === 'create') return { t: '+ ' + f.load_id, c: 'create' };
+      if (ck.write && ai.action === 'patch') return { t: sc.rowBefore.load + ' fixed', c: 'patch' };
+      return { t: 'No write', c: 'muted' };
+    case 'digest': return { t: 'Adds 1 line' };
+  }
+  return null;
+}
+function chipHTML(i, k) { if (k === 'claude') return ''; var c = chipInfo(i, k); return c ? '<span class="st-chip' + (c.c ? ' ' + c.c : '') + '" data-chip="' + k + '"><span>' + hl(c.t) + '</span></span>' : ''; }
+// the small sheet under the route (frame mode): three rows; post = after the decision
+var COLW = { status: 'Status', shipper: 'Shipper' };
+function sheetHTML(i, post) {
+  var sc = i >= 0 ? SC[i] : null, ai = sc ? sc.ai : { action: 'quiet' }, f = ai.fields || {}, rows = [], badge = '';
+  var at = function (j) { var r = SHEET[j] || {}; return { load: r.load, shipper: r.shipper, lane: r.lane, status: r.status }; };
+  if (ai.action === 'create') {
+    rows = [at(SHEET.length - 2), at(SHEET.length - 1)];
+    rows.push(post ? { load: f.load_id, shipper: f.shipper, lane: f.lane, status: f.status, cls: 'new' } : { load: '', shipper: '', lane: '', status: '', cls: 'slot' });
+  } else {
+    var idx = -1; SHEET.forEach(function (r, j) { if (r.id === ai.row_id) idx = j; });
+    var c = idx < 0 ? SHEET.length - 2 : Math.min(Math.max(idx, 1), SHEET.length - 2);
+    rows = [at(c - 1), at(c), at(c + 1)];
+    if (ai.action === 'patch' && idx >= 0) {
+      var key = Object.keys(f)[0], col = COLW[key] ? key : 'status', t = rows[idx - c + 1];
+      t.edit = col; t.old = sc.rowBefore[key === 'appt_local' ? 'appt' : key] || ''; t.nw = f[key]; t.post = post;
+    }
+    if (ai.action === 'quiet' && post && sc) badge = '<span class="ms-badge" data-ms="none">' + ic('i-moon-small') + 'No change</span>';
+  }
+  var td = function (r, k, cls) {
+    if (r.edit === k) return r.post ? '<td class="cell" data-ms="cell"><s>' + esc(r.old) + '</s><span class="nw">' + esc(r.nw) + '</span></td>' : '<td class="pend">' + esc(r.old) + '</td>';
+    return '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + hl(r[k] || '') + '</td>';
+  };
+  var h = '<div class="ms-h">' + ic('i-sheet') + '<span>The sheet</span>' + badge + '</div><table class="ms"><colgroup><col class="c-load"><col class="c-ship"><col class="c-stat"></colgroup><thead><tr><th>Load</th><th>Shipper</th><th>Status</th></tr></thead><tbody>';
+  rows.forEach(function (r) { h += '<tr' + (r.cls ? ' class="' + r.cls + '"' + (r.cls === 'new' ? ' data-ms="row"' : '') : '') + '>' + td(r, 'load', 'ld') + td(r, 'shipper') + td(r, 'status') + '</tr>'; });
+  return h + '</tbody></table>';
+}
+function animOut(ms) {
+  if (!ANIM || RM.matches || !(ms > 0)) return;
+  var o = $('#pOut'), e;
+  if ((e = $('tr[data-ms="row"]', o))) $$('td', e).forEach(function (c, n) { c.animate([{ opacity: 0, transform: 'translateX(-36px)' }, { opacity: 1, transform: 'none' }], { duration: ms * .7, delay: n * ms * .05, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' }); });
+  if ((e = $('td[data-ms="cell"]', o))) {
+    e.animate([{ backgroundColor: '#FFFFFF', boxShadow: 'inset 0 0 0 3px #CFD4EC' }, { backgroundColor: '#E3F3E1', boxShadow: 'inset 0 0 0 3px #1D6B2E' }], { duration: ms * .5, easing: 'ease-out', fill: 'backwards' });
+    $('.nw', e).animate([{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'scale(1.12)', offset: .7 }, { opacity: 1, transform: 'none' }], { duration: ms * .6, delay: ms * .25, easing: 'ease-out', fill: 'backwards' });
+  }
+  if ((e = $('[data-ms="none"]', o))) e.animate([{ opacity: 0, transform: 'scale(1.6)' }, { opacity: 1, transform: 'scale(.95)', offset: .7 }, { opacity: 1, transform: 'none' }], { duration: ms * .6, easing: 'ease-out', fill: 'backwards' });
+}
+
 /* ---------- pipeline state + render ---------- */
 var elRoute = $('#route'), elTrackOn = $('#trackOn');
 (function buildStations() {
@@ -2068,37 +2238,49 @@ function renderPipe(opt) {
   else t = '<span class="p-num">' + ic('i-envelope') + '</span><span class="p-name">Six synthetic emails, one fixed route</span><span class="p-cap">Three work. Three stop and ask a person.</span>';
   pSet('title', $('#pTitle'), t);
   // stations
-  elRoute.classList.toggle('stops', !!sc && !sc.works);
+  // frame mode shows the stop as soon as Claude decides it; the normal view shows it when the scenario ends
+  var stopShown = !!sc && !sc.works && (P.ended || (FRAME && P.reached >= last));
+  elRoute.classList.toggle('stops', FRAME ? stopShown : !!sc && !sc.works);
+  elRoute.classList.toggle('good', FRAME && !!sc && sc.works && P.ended);
   STATIONS.forEach(function (s, k) {
-    var done = sc && k <= P.reached, ghost = sc && P.ended && k > end, el = stEls[k];
+    var done = sc && k <= P.reached, ghost = sc && (P.ended || (FRAME && stopShown)) && k > end, el = stEls[k];
     el.classList.toggle('done', !!done);
     el.classList.toggle('on', !!sc && !P.ended && (P.moving >= 0 ? k === P.moving : k === P.reached));
     el.classList.toggle('ghost', !!ghost);
-    el.classList.toggle('stop', !!sc && P.ended && !sc.works && k === last);
-    el.classList.toggle('also', !!sc && P.ended && !sc.works && k > last && k <= end);
-    var h = done ? stationHTML(P.i, s.k) : ghost ? '<div class="r-none">Not reached.</div>' : '';
+    el.classList.toggle('stop', stopShown && k === last);
+    el.classList.toggle('also', stopShown && k > last && k <= end && (P.ended || P.reached >= k));
+    var h = done ? chipHTML(P.i, s.k) + stationHTML(P.i, s.k) : ghost ? '<div class="r-none">Not reached.</div>' : '';
     if (pSet('st' + k, stBodies[k], h) && opt.animate && done && h) A(stBodies[k], [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], 380);
   });
-  if (opt.animate && P.ended && sc && !sc.works) A($('.st-stopmark', stEls[last]), [{ opacity: 0, transform: 'scale(.4)' }, { opacity: 1, transform: 'scale(1.15)', offset: .7 }, { opacity: 1, transform: 'scale(1)' }], 420);
-  var reach = sc ? Math.max(0, P.reached) : 0;
-  elTrackOn.classList.toggle('stops', !!sc && !sc.works);
-  elTrackOn.style.transition = opt.animate && !RM.matches ? 'width ' + Math.round((opt.ms || 500)) + 'ms cubic-bezier(.6,0,.2,1)' : 'none';
-  elTrackOn.style.width = sc && P.reached >= 0 ? (100 * reach / (STATIONS.length - 1)) + '%' : '0';
+  if (opt.animate && stopShown && (FRAME ? !pHtml.stopmark : P.ended)) A($('.st-stopmark', stEls[last]), [{ opacity: 0, transform: 'scale(.4)' }, { opacity: 1, transform: 'scale(1.15)', offset: .7 }, { opacity: 1, transform: 'scale(1)' }], 420);
+  pHtml.stopmark = stopShown;
+  // the filled line: in frame mode it follows the token, so the line behind the document fills as it travels
+  var fillTo = FRAME && sc && P.moving >= 0 ? P.moving : P.reached, reach = sc ? Math.max(0, fillTo) : 0;
+  elTrackOn.classList.toggle('stops', FRAME ? stopShown : !!sc && !sc.works);
+  elTrackOn.classList.toggle('good', FRAME && !!sc && sc.works && P.ended);
+  elTrackOn.style.transition = opt.animate && !RM.matches ? 'width ' + Math.round((FRAME && opt.beatMs ? opt.beatMs : opt.ms || 500)) + 'ms cubic-bezier(.6,0,.2,1)' : 'none';
+  elTrackOn.style.width = sc && fillTo >= 0 ? (100 * reach / (STATIONS.length - 1)) + '%' : '0';
   // banner
   var b = '', bc = '';
   if (!sc) { bc = ''; b = ic('i-spark') + '<span>Pick a scenario, or press Play all.<small>Each email takes the same seven steps.</small></span>'; }
-  else if (!P.ended) { bc = ''; b = ic('i-envelope') + '<span>' + esc(sc.caption) + '</span>'; }
+  else if (!P.ended) { bc = ''; b = FRAME ? '' : ic('i-envelope') + '<span>' + esc(sc.caption) + '</span>'; }
   else if (sc.works) { bc = 'works'; b = ic('i-check') + '<span>' + (sc.ai.action === 'quiet' ? 'Right call: nothing to do. No write.' : 'Right call: the sheet is right by morning.') + '<small>' + esc(sc.caption) + '</small></span>'; }
   else { bc = 'stops'; b = ic('i-hand') + '<span>' + hl(sc.ask.text) + '<small>It waits in the Waiting for you list. A person decides.</small></span>'; }
-  var ban = $('#pBanner'); ban.className = 'p-banner' + (bc ? ' ' + bc : '');
+  var ban = $('#pBanner'); ban.className = 'p-banner' + (bc ? ' ' + bc : '') + (FRAME && !(sc && P.ended) ? ' idle' : '');
   if (pSet('banner', ban, b) && opt.animate && !opt.fly) A(ban, [{ opacity: 0 }, { opacity: 1 }], 300);
   // waiting for you
   var w = '<div class="p-wait-h">' + ic('i-person-pause') + '<span>Waiting for you</span><span class="count">' + P.tray.length + '</span></div><ul>';
   if (!P.tray.length) w += '<li class="none">Nothing yet.</li>';
-  P.tray.forEach(function (j) { w += '<li class="' + (j === P.fresh ? 'new' : '') + '" data-wait="' + SC[j].id + '">' + ic(SC[j].ask.icon) + '<span>' + hl(SC[j].ask.tray) + '</span></li>'; });
+  P.tray.forEach(function (j) { w += '<li class="' + (j === P.fresh ? 'new' : '') + '" data-wait="' + SC[j].id + '">' + ic(SC[j].ask.icon) + '<span class="tw-long">' + hl(SC[j].ask.tray) + '</span><span class="tw-short"><b>' + esc(SC[j].short) + '</b><span class="tw-chip"><span>' + hl(chipInfo(j, 'check').t) + '</span></span></span></li>'; });
   w += '</ul>';
   var wait = $('#pWait'); wait.classList.toggle('on', P.fresh >= 0 && P.fresh === P.i && P.ended);
   pSet('wait', wait, w);
+  // frame mode: the small sheet (works, and every scenario while it plays) or the tray (a stop, once it asks a person)
+  if (FRAME) {
+    var post = !!sc && P.ended && sc.works;
+    $('#pFoot').classList.toggle('show-tray', !!sc && P.ended && !sc.works);
+    if (pSet('out', $('#pOut'), sheetHTML(sc ? P.i : -1, post)) && opt.animate && post) animOut(opt.beatMs || 800);
+  }
   // chips
   var cw = '<span class="p-grp-h">Works</span>', cs = '<span class="p-grp-h">Stops</span>';
   SC.forEach(function (x, j) {
@@ -2123,11 +2305,18 @@ function moveToken(sc, from, to, ms) {
   if (ptok) try { ptok.cancel(); } catch (e) { }
   ptok = tk.animate([{ transform: 'translateX(' + x0 + 'px)', opacity: from < 0 ? 0 : 1 }, { transform: 'translateX(' + x1 + 'px)', opacity: 1 }], { duration: ms, easing: 'cubic-bezier(.6,0,.2,1)', fill: 'forwards' });
 }
-function hideToken(ms) { var tk = $('#ptoken'); if (!tk) return; if (ptok) { try { ptok.cancel(); } catch (e) { } ptok = null; } if (ms > 0 && ANIM && !RM.matches) { var x = tk.style.transform; } tk.style.opacity = 0; }
+function hideToken(ms) {
+  var tk = $('#ptoken'); if (!tk) return;
+  var tf = ms > 0 && ANIM && !RM.matches && ptok ? getComputedStyle(tk).transform : null;
+  if (ptok) { try { ptok.cancel(); } catch (e) { } ptok = null; }
+  tk.style.opacity = 0;
+  if (tf && tf !== 'none') { tk.style.transform = tf; var fa = tk.animate([{ opacity: 1, transform: tf }, { opacity: 0, transform: tf + ' scale(.6)' }], { duration: ms, easing: 'ease-in' }); fa.onfinish = function () { tk.style.transform = ''; }; }
+}
 function rectIn(el, host) { var r = el.getBoundingClientRect(), h = host.getBoundingClientRect(); return { x: (r.left - h.left) / scaleK, y: (r.top - h.top) / scaleK, w: r.width / scaleK, h: r.height / scaleK }; }
 function flyAsk(i, ms) {
   if (!ANIM || RM.matches || ms <= 0) return;
   var sc = SC[i], host = $('#pipe'), from = stEls[stopIdx(sc)], to = $('#pWait');
+  if (FRAME) return flyCard(i, ms, host, $('.st-badge', from), $('#pWait li[data-wait="' + sc.id + '"]') || to);
   var a = rectIn(from, host), b = rectIn(to, host);
   var el = document.createElement('div'); el.className = 'p-fly'; el.innerHTML = ic('i-person-pause') + '<span>Asks a person</span>';
   host.appendChild(el);
@@ -2136,6 +2325,18 @@ function flyAsk(i, ms) {
   var an = el.animate([{ transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(.7)', opacity: 0 }, { transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1)', opacity: 1, offset: .25 }, { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(.9)', opacity: 1, offset: .85 }, { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(.9)', opacity: 0 }], { duration: ms, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
   an.onfinish = function () { if (el.parentNode) el.parentNode.removeChild(el); };
   flies.push(el);
+}
+function flyCard(i, ms, host, from, to) {
+  var sc = SC[i], a = rectIn(from, host), b = rectIn(to, host);
+  var el = document.createElement('div'); el.className = 'p-fly'; el.innerHTML = ic(sc.attach ? 'i-envelope-attach' : 'i-envelope') + '<span>' + esc(sc.short) + '</span>';
+  host.appendChild(el);
+  var w = el.offsetWidth, h = el.offsetHeight;
+  var x0 = a.x + a.w / 2 - w / 2, y0 = a.y + a.h / 2 - h / 2, x1 = b.x + 12, y1 = b.y + b.h / 2 - h / 2;
+  var an = el.animate([{ transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(.5)', opacity: 0 }, { transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1.05)', opacity: 1, offset: .2 }, { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(1)', opacity: 1, offset: .8 }, { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(1)', opacity: 0 }], { duration: ms, easing: 'cubic-bezier(.5,0,.2,1)', fill: 'forwards' });
+  an.onfinish = function () { if (el.parentNode) el.parentNode.removeChild(el); };
+  flies.push(el);
+  if (to.tagName === 'LI') to.animate([{ opacity: 0, transform: 'translateX(-20px)' }, { opacity: 1, transform: 'none' }], { duration: ms * .25, delay: ms * .72, easing: 'ease-out', fill: 'backwards' });
+  var cnt = $('#pWait .count'); if (cnt) cnt.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.35)' }, { transform: 'scale(1)' }], { duration: ms * .3, delay: ms * .75 });
 }
 var flies = [];
 function killFlies() { flies.forEach(function (el) { if (el.parentNode) el.parentNode.removeChild(el); }); flies = []; }
@@ -2147,6 +2348,16 @@ function scenarioBeats(i) {
   b.push(sc.works ? { type: 'end', i: i, dur: 1.5 } : { type: 'ask', i: i, dur: 2.4 });
   return b;
 }
+// frame mode: the token stops at the station that decides a stop; the check still shows its result after it ("also")
+function scenarioBeatsFrame(i) {
+  var sc = SC[i], last = stopIdx(sc), end = endIdx(sc), b = [{ type: 'start', i: i, dur: .25 }];
+  for (var k = 0; k <= last; k++) { b.push({ type: 'move', i: i, k: k, dur: k === 0 ? .5 : .45 }); b.push({ type: 'show', i: i, k: k, dur: .4 }); }
+  for (k = last + 1; k <= end; k++) b.push({ type: 'show', i: i, k: k, dur: .55 });
+  b.push(sc.works ? { type: 'end', i: i, dur: 1.7 } : { type: 'ask', i: i, dur: 1.9 });
+  return b;
+}
+function beatsFor(i) { return FRAME ? scenarioBeatsFrame(i) : scenarioBeats(i); }
+function beatsTotal(list) { var t = 0; list.forEach(function (j) { beatsFor(j).forEach(function (b) { t += b.dur; }); }); return t; }
 function applyBeat(bt) {
   var P = PS;
   if (bt.type === 'start') { P.i = bt.i; P.reached = -1; P.moving = -1; P.ended = false; P.fresh = -1; }
@@ -2160,7 +2371,7 @@ function pStop() { if (prun) { clearTimeout(prun.timer); var r = prun.resolve; p
 function pState() { return { view: 'pipe', done: pDone, playing: !!prun, current: PS.i >= 0 ? SC[PS.i].id : null, played: pPlayed.slice(), waiting: PS.tray.map(function (j) { return SC[j].id; }) }; }
 function pRun(list, speed, trayStart) {
   pStop(); root.classList.remove('no-anim');
-  var beats = []; list.forEach(function (i) { scenarioBeats(i).forEach(function (b) { beats.push(b); }); });
+  var beats = []; list.forEach(function (i) { beatsFor(i).forEach(function (b) { beats.push(b); }); });
   PS = { i: -1, reached: -1, moving: -1, ended: false, tray: trayStart.slice(), fresh: -1 };
   pDone = false; pPlayed = [];
   return new Promise(function (resolve) {
@@ -2173,10 +2384,12 @@ function pStep() {
   var prevReached = PS.reached;
   applyBeat(bt);
   ANIM = true; KSPEED = r.speed;
-  renderPipe({ animate: true, ms: ms * .9, fly: bt.type === 'ask' });
+  // frame mode: each scenario starts clean, with no rewind of the line or the station colours
+  if (FRAME && bt.type === 'start') { killFlies(); root.classList.add('no-anim'); renderPipe({ animate: false }); void root.offsetWidth; root.classList.remove('no-anim'); }
+  else renderPipe({ animate: true, ms: ms * .9, beatMs: bt.type === 'move' ? ms : bt.type === 'end' ? ms * .8 : ms * .9, fly: bt.type === 'ask' });
   if (bt.type === 'move') moveToken(sc, bt.k === 0 ? -1 : bt.k - 1, bt.k, ms);
-  if (bt.type === 'end' || bt.type === 'ask') { hideToken(0); if (pPlayed.indexOf(sc.id) < 0) pPlayed.push(sc.id); }
-  if (bt.type === 'ask') flyAsk(bt.i, ms * .75);
+  if (bt.type === 'end' || bt.type === 'ask') { hideToken(FRAME ? Math.min(300, ms * .3) : 0); if (pPlayed.indexOf(sc.id) < 0) pPlayed.push(sc.id); }
+  if (bt.type === 'ask') flyAsk(bt.i, ms * (FRAME ? .7 : .75));
   if (bt.type === 'start') hideToken(0);
   if (bt.type === 'show' && MOBILE.matches && !PRESENT) { try { stEls[bt.k].scrollIntoView({ block: 'nearest', behavior: RM.matches ? 'auto' : 'smooth' }); } catch (e) { } }
   r.deadline += ms;
@@ -2200,10 +2413,22 @@ function showScenario(i) {
   if (pPlayed.indexOf(SC[i].id) < 0) pPlayed.push(SC[i].id);
   return raf2().then(function () { finishAll(); return raf2(); }).then(function () { return { index: i, id: SC[i].id, caption: SC[i].caption }; });
 }
-function playScenario(i, speed) { setView('pipe'); return pRun([i], speed > 0 ? speed : SPEED, stopsBefore(i)); }
+// playScenario(i, {ms}) fills ms milliseconds (token flow plus the outcome) and resolves when the end state is on screen;
+// {speed} keeps the old pace. Reduced motion: the end state shows at once and the promise still resolves after ms.
+function playScenario(i, o) {
+  o = typeof o === 'number' ? { speed: o } : (o || {});
+  if (typeof i === 'string') { var m = /^s?(\d)$/.exec(i); i = m ? +m[1] - 1 : -1; }
+  if (!SC[i]) return Promise.reject(new Error('no scenario ' + i));
+  setView('pipe');
+  var total = beatsTotal([i]), speed = o.ms > 0 ? total * 1000 / Math.max(2500, o.ms) : o.speed > 0 ? o.speed : SPEED;
+  if (RM.matches && o.ms > 0) {
+    return showScenario(i).then(function () { root.classList.remove('no-anim'); return new Promise(function (r) { setTimeout(function () { r(pState()); }, Math.max(2500, o.ms)); }); });
+  }
+  return pRun([i], speed, stopsBefore(i));
+}
 function playScenarios(opts) { opts = opts || {}; setView('pipe'); return pRun(SC.map(function (x, j) { return j; }), opts.speed > 0 ? opts.speed : SPEED, []); }
 function pReset() { pStop(); pDone = false; pPlayed = []; PS = { i: -1, reached: -1, moving: -1, ended: false, tray: [], fresh: -1 }; ANIM = false; renderPipe({ animate: false }); }
-function pTotal() { var t = 0; SC.forEach(function (x, j) { scenarioBeats(j).forEach(function (b) { t += b.dur; }); }); return t; }
+function pTotal() { return beatsTotal(SC.map(function (x, j) { return j; })); }
 
 /* ---------- view switch ---------- */
 function setView(v) {
@@ -2228,7 +2453,7 @@ $('#pPlay').addEventListener('click', function () {
   if (prun) { var i = PS.i; pStop(); if (i >= 0) showScenario(i).then(function () { root.classList.remove('no-anim'); }); return; }
   playScenarios({ speed: SPEED });
 });
-function chipClick(e) { var b = e.target.closest('[data-sc]'); if (!b) return; playScenario(+b.getAttribute('data-sc'), SPEED); if (MOBILE.matches && !PRESENT) { try { $('#pTitle').scrollIntoView({ block: 'start', behavior: RM.matches ? 'auto' : 'smooth' }); } catch (err) { } } }
+function chipClick(e) { var b = e.target.closest('[data-sc]'); if (!b) return; playScenario(+b.getAttribute('data-sc'), { speed: SPEED }); if (MOBILE.matches && !PRESENT) { try { $('#pTitle').scrollIntoView({ block: 'start', behavior: RM.matches ? 'auto' : 'smooth' }); } catch (err) { } } }
 $('#pWorks').addEventListener('click', chipClick); $('#pStops').addEventListener('click', chipClick);
 
 /* ---------------- boot ---------------- */
@@ -2249,7 +2474,10 @@ var api = {
   scenarios: SC.map(function (x) { return { id: x.id, n: x.n, message_id: x.message_id, works: x.works, caption: x.caption, short: x.short, stopAt: x.stopAt }; }),
   showScenario: showScenario,
   playScenarios: playScenarios,
-  playScenario: function (i, o) { return playScenario(i, o && o.speed); },
+  // playScenario(i, {ms}) or (i, {speed}); in frame mode each run starts clean (the outcome of the last one is cleared)
+  playScenario: function (i, o) { return playScenario(i, o); },
+  // the chip words per station for one scenario, for tests and the narration script
+  chips: function (i) { if (!SC[i]) return null; return STATIONS.map(function (s, k) { if (k > endIdx(SC[i])) return null; return s.k === 'claude' ? OUT[ACT[SC[i].ai.action]].label : chipInfo(i, s.k).t; }); },
   // what the page computed for one scenario (decision from the recorded AI run, PDF reader and check run here), for tests
   scenarioResult: function (i) { var x = SC[i]; if (!x) return null; return { id: x.id, message_id: x.message_id, works: x.works, stopAt: x.stopAt, decision: x.ai.action, outcome: OUT[ACT[x.ai.action]].label, row_id: x.ai.row_id, gate: x.ai.gate, fields: x.ai.fields, reader: PR[i].reader, check: PR[i].check }; }
 };
