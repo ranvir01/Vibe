@@ -2,11 +2,11 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SheetSync Overnight: AI that ends data entry for a small trucking company</title>
-<meta name="description" content="A 3-slide pitch with a narrated prototype video: six sample emails go through Gmail, Drive, a PDF reader, Claude, a code check and Google Sheets overnight. FIN579 capstone by Ranvir Thind. Synthetic data.">
+<meta name="description" content="A narrated prototype video and three slides: six sample emails go through Gmail, Drive, a PDF reader, Claude, a code check and Google Sheets overnight. FIN579 capstone by Ranvir Thind. Synthetic data.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SheetSync Overnight">
 <meta property="og:title" content="SheetSync Overnight: AI that ends data entry for a small trucking company">
-<meta property="og:description" content="A 3-slide pitch with a narrated prototype video. Six sample emails go through Gmail, Drive, a PDF reader, Claude, a code check and Google Sheets overnight. Synthetic data.">
+<meta property="og:description" content="A narrated prototype video and three slides. Six sample emails go through Gmail, Drive, a PDF reader, Claude, a code check and Google Sheets overnight. Synthetic data.">
 <meta property="og:url" content="https://ranvir01.github.io/Vibe/sheetsync-overnight/pitch/">
 <meta property="og:image" content="https://raw.githubusercontent.com/ranvir01/Vibe/sheetsync-overnight/sheetsync-overnight/og.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="627">
@@ -14,19 +14,42 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/ranvir01/Vibe/sheetsync-overnight/sheetsync-overnight/og.jpg">
 <style>
-body{margin:0;min-height:100vh;display:grid;place-items:center;background:#faf9f5;color:#1a1d24;font:18px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-main{max-width:760px;padding:24px;text-align:center}
-img{width:100%;border-radius:14px;box-shadow:0 10px 30px -12px rgba(0,0,0,.3)}
-h1{font-size:28px;margin:22px 0 6px}
-p{color:#5a606c;margin:0 0 22px}
-a.btn{display:inline-block;background:#2457c5;color:#fff;text-decoration:none;font-weight:600;padding:14px 26px;border-radius:10px}
-.s{font-size:14px;margin-top:16px}
+:root{--ink:#1a1d24;--muted:#5a606c;--line:#e2e5ea;--accent:#2457c5;--paper:#faf9f5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+.kick{font-size:14px;color:var(--muted);margin:0 0 6px}
+h1{font-size:clamp(26px,5vw,40px);line-height:1.15;margin:0 0 10px}
+.lede{color:var(--muted);margin:0 0 20px}
+h2{font-size:20px;margin:36px 0 12px}
+video,.slide{display:block;width:100%;border-radius:12px;border:1px solid var(--line);background:#fff;box-shadow:0 8px 24px -14px rgba(0,0,0,.35)}
+.slide{margin:0 0 16px}
+.cap{font-size:15px;color:var(--muted);margin:8px 0 0}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 0}
+.btn{display:inline-block;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:600;border:1px solid var(--line);color:var(--ink);background:#fff}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.foot{font-size:14px;color:var(--muted);margin-top:36px;border-top:1px solid var(--line);padding-top:14px}
 </style>
-<script>setTimeout(function(){location.replace("https://claude.ai/artifact/GbrRgujcPJCxpcTKpeeGAZ")},400)</script>
 </head><body><main>
-<a href="https://claude.ai/artifact/GbrRgujcPJCxpcTKpeeGAZ"><img src="https://raw.githubusercontent.com/ranvir01/Vibe/sheetsync-overnight/sheetsync-overnight/og.jpg" alt="SheetSync prototype preview"></a>
+<p class="kick">FIN579 Capstone · Ranvir Thind</p>
 <h1>SheetSync Overnight</h1>
-<p>AI that ends data entry for a small trucking company. Three slides and a narrated prototype video.</p>
-<a class="btn" href="https://claude.ai/artifact/GbrRgujcPJCxpcTKpeeGAZ">Open the pitch</a>
-<p class="s">Opening the pitch now. FIN579 capstone · Ranvir Thind · all data synthetic.</p>
+<p class="lede">AI that ends data entry for a small trucking company. Every night it reads broker emails and their PDFs, updates the load sheet, and asks a person whenever it should.</p>
+
+<h2>Watch the prototype (1:58)</h2>
+<video controls playsinline preload="metadata" poster="poster.jpg">
+  <source src="video.mp4" type="video/mp4">
+</video>
+<p class="cap">Six made-up emails go through Gmail, Drive, a PDF reader, Claude, a code check and Google Sheets. Three are handled on their own and three wait for a person. Mockup, nothing connected, computer voice.</p>
+
+<h2>The pitch in three slides</h2>
+<img class="slide" src="slide-1.jpg" alt="Slide 1: Data entry is a waste of time. The owner wants to scale but has no time. Today a person types each rate confirmation from Gmail into the spreadsheet. Goal: save about 10 to 20 hours a week." loading="lazy">
+<img class="slide" src="slide-2.jpg" alt="Slide 2: Ready to save time. Claude plus a little code and ready-made connectors runs every day: Gmail, Drive, PDF reader, Claude, check, Sheets, 7:00 digest. Money, sending, logins and rule changes stay with a person. 96.7% right on synthetic test emails." loading="lazy">
+<img class="slide" src="slide-3.jpg" alt="Slide 3: The closed circle. Problem, technique, data, generation, action, metric. AI step 96.7% right calls versus plain rules 66.7%. Next step: a four-week pilot on the real inbox." loading="lazy">
+
+<div class="btns">
+  <a class="btn pri" href="https://claude.ai/artifact/4iQwwbqRDcKKa2SHYULVV1">Try the prototype</a>
+  <a class="btn" href="https://claude.ai/artifact/GbrRgujcPJCxpcTKpeeGAZ">Full slide deck (best on a laptop)</a>
+</div>
+
+<p class="foot">Northline Freight is fictional and every email, load and number is synthetic. The 96.7% is a ceiling on test data, not a production result.</p>
 </main></body></html>
